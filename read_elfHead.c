@@ -12,7 +12,7 @@ int reverse_endianess(int value)
     return resultat;
 }
 
-int read_elf_header(FILE *elfFile)
+int read_elf_header(FILE *file)
 {
     Elf32Hdr header;
     fread(&header, 1, sizeof(header), file);
@@ -134,7 +134,7 @@ int read_elf_header(FILE *elfFile)
         printf("  Version ABI:\t%d\n", header.e_ident[8]);
 
         //Affichage de e_type
-        printf("  Type:\t");
+        printf("  Type:\t\t");
 
         //printf("%08x\n",reverse_endianess(header.e_type)>>16 );
         switch (reverse_endianess(header.e_type) >> 16)
@@ -165,7 +165,7 @@ int read_elf_header(FILE *elfFile)
         }
 
         //Affichage de e_machine
-        printf("  Machine: \t ARM\n");
+        printf("  Machine:\tARM\n");
 
         //Affichage de e_version
         printf("  Version:\t");
@@ -199,7 +199,7 @@ int read_elf_header(FILE *elfFile)
         printf("  Taille de cet en-tête:\t %d (octets)\n", reverse_endianess(header.e_ehsize) >> 16);
 
         //Affichage de e_phentsize
-        printf("  Taille de l'en-tête du programme: :\t %d (octets)\n", reverse_endianess(header.e_phentsize) >> 16);
+        printf("  Taille de l'en-tête du programme:\t %d (octets)\n", reverse_endianess(header.e_phentsize) >> 16);
 
         //Affichage de e_phnum
         printf("  Nombre d'en-tête du programme:\t %d\n", reverse_endianess(header.e_phnum) >> 16);
@@ -225,7 +225,7 @@ int read_elf_header(FILE *elfFile)
 int main(int argc, char *argv[])
 {
     char *elfile = argv[1];
-    FILE *file = fopen(elfFile, "rb");
+    FILE *file = fopen(elfile, "rb");
     if(!file){
         printf("erreur de lecture");
     } else {
