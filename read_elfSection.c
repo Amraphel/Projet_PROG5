@@ -1,11 +1,11 @@
 #include "read_elfSection.h"
 
-int read_elf_section(FILE *elfFile, Elf32Hdr header)
+Elf32_Shdr* read_elf_section(FILE *elfFile, Elf32Hdr header)
 {
     Elf32_Shdr section[header.e_shnum];
 
     //fseek(elfFile, header.e_shoff + header.e_shstrndx * sizeof(Elf32_Shdr), SEEK_SET);
-    fseek(elfFile, header.e_shoff, SEEK_SET);
+    fseek(elfFile, reverse_endianess(header.e_shoff), SEEK_SET);
 
     printf("\nIl y a %d en-têtes de section, débutant à l'adresse de décalage 0x%02x: \n", header.e_shnum, header.e_shoff);
 
@@ -119,19 +119,19 @@ int read_elf_section(FILE *elfFile, Elf32Hdr header)
     }
 
 
-    return 0;
+    return section;
 }
 
-int main(int argc, char *argv[])
-{
-    FILE *file = fopen(argv[1], "rb");
-    if(!file){
-        printf("erreur de lecture");
-    } else {
-        Elf32Hdr header = read_elf_header(file);
-        read_elf_section(file, header);
-    }
+// int main(int argc, char *argv[])
+// {
+//     FILE *file = fopen(argv[1], "rb");
+//     if(!file){
+//         printf("erreur de lecture");
+//     } else {
+//         Elf32Hdr header = read_elf_header(file);
+//         Elf32_Shdr section = read_elf_section(file, header);
+//     }
 
-    fclose(file);
-    return 0;
-}
+//     fclose(file);
+//     return 0;
+// }

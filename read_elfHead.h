@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 typedef uint32_t ELF32_Addr ;
 typedef uint16_t ELF32_Half ;
 typedef uint32_t ELF32_Off ;
@@ -23,3 +24,9 @@ typedef struct {
   ELF32_Half     e_shnum;             /* Section header table entry count */
   ELF32_Half     e_shstrndx;          /* Section header string table index */
 } Elf32Hdr; 
+
+int is_little_endian();
+
+int reverse_endianess(int value);
+
+Elf32Hdr read_elf_header(FILE *file);
