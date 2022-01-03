@@ -10,14 +10,14 @@ int read_elf_section_data(char * a,Elf32Hdr header, Elf32_Shdr * sections, FILE*
             i++;
         }
     }
-    printf("Vidange hexadécimale de la section « %s » :\n", sections[i].sh_name);
     int taille = sections[i].sh_size;
     if(taille==0){
-
+        printf("La section « %s » n'a pas de données à vidanger .", sections[i].sh_name);
     } else{
+        printf("Vidange hexadécimale de la section « %s » :\n", sections[i].sh_name);
         fseek(file,(sections[i].sh_addr+sections[i].sh_offset), SEEK_SET);
         uint8_t tab[taille];
-        fread(tab, file, taille);
+        fread(tab, 1,taille*sizeof(uint8_t),file);
         for(int i =0; i<=taille/16; i++){
             uint32_t addr = sections[i].sh_addr + (i<1);
             printf("  0x%08x ", addr);
@@ -26,7 +26,7 @@ int read_elf_section_data(char * a,Elf32Hdr header, Elf32_Shdr * sections, FILE*
                 if(j%4==3){
                     printf("%02x ", tab[j+i*16]);
                 } else{
-                    printf("%02x", tab[j+i*16])
+                    printf("%02x", tab[j+i*16]);
                 } 
                 j++;
             }
