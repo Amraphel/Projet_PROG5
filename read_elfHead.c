@@ -1,18 +1,32 @@
 #include "read_elfHead.h"
-int reverse_endianess(int value)
-{
+int is_little_endian() {
     int resultat = 0;
-    char *source, *destination;
-    int i;
+    char *caractere;
+    int entier;
 
-    source = (char *)&value;
-    destination = ((char *)&resultat) + sizeof(int);
-    for (i = 0; i < sizeof(int); i++)
-        *(--destination) = *(source++);
+    entier = 1;
+    caractere = (char *) &entier;
+    resultat = *caractere;
     return resultat;
 }
 
-int read_elf_header(FILE *file)
+int reverse_endianess(int value)
+{
+    if(is_little_endian()){
+        int resultat = 0;
+        char *source, *destination;
+        int i;
+
+        source = (char *)&value;
+        destination = ((char *)&resultat) + sizeof(int);
+        for (i = 0; i < sizeof(int); i++)
+            *(--destination) = *(source++);
+        return resultat;
+    }
+    
+}
+
+Elf32Hdr read_elf_header(FILE *file)
 {
     Elf32Hdr header;
     fread(&header, 1, sizeof(header), file);
@@ -165,7 +179,12 @@ int read_elf_header(FILE *file)
         }
 
         //Affichage de e_machine
-        printf("  Machine:\tARM\n");
+        if(reverse_endianess(header.e_machine)>>16==40){
+            printf("  Machine:\tARM\n");
+        } else {
+            printf("  Machine:\tNon-ARM\n");
+        }
+
 
         //Affichage de e_version
         printf("  Version:\t");
@@ -215,11 +234,11 @@ int read_elf_header(FILE *file)
     }
     else
     {
-        return 1;
-        //error
+        fprintf(stderr,"");
+        exit(1);
     }
 
-    return 0;
+    return header;
 }
 
 int main(int argc, char *argv[])
