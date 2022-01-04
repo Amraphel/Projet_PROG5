@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 #include "read_elfHead.h"
 
 typedef uint32_t ELF32_Addr ;

@@ -1,18 +1,38 @@
 #include "read_elfHead.h"
-int reverse_endianess(int value)
-{
-    int resultat = 0;
-    char *source, *destination;
-    int i;
 
-    source = (char *)&value;
-    destination = ((char *)&resultat) + sizeof(int);
-    for (i = 0; i < sizeof(int); i++)
-        *(--destination) = *(source++);
+int is_little_endian() {
+    int resultat = 0;
+    char *caractere;
+    int entier;
+
+    entier = 1;
+    caractere = (char *) &entier;
+    resultat = *caractere;
     return resultat;
 }
 
-int read_elf_header(FILE *file)
+int reverse_endianess(int value)
+{
+    if (is_little_endian())
+    {
+    
+        int resultat = 0;
+        char *source, *destination;
+        int i;
+
+        source = (char *)&value;
+        destination = ((char *)&resultat) + sizeof(int);
+        for (i = 0; i < sizeof(int); i++)
+            *(--destination) = *(source++);
+        return resultat;
+    }
+
+    else 
+        return value;
+    
+}
+
+Elf32Hdr read_elf_header(FILE *file)
 {
     Elf32Hdr header;
     fread(&header, 1, sizeof(header), file);
@@ -215,23 +235,23 @@ int read_elf_header(FILE *file)
     }
     else
     {
-        return 1;
-        //error
+        fprintf(stderr,"Erreur de lecture\n");
+        exit(1);
     }
 
-    return 0;
+    return header;
 }
 
-int main(int argc, char *argv[])
-{
-    char *elfile = argv[1];
-    FILE *file = fopen(elfile, "rb");
-    if(!file){
-        printf("erreur de lecture");
-    } else {
-            read_elf_header(file);
-    }
+// int main(int argc, char *argv[])
+// {
+//     char *elfile = argv[1];
+//     FILE *file = fopen(elfile, "rb");
+//     if(!file){
+//         printf("erreur de lecture");
+//     } else {
+//             read_elf_header(file);
+//     }
 
-    fclose(file);
-    return 0;
-}
+//     fclose(file);
+//     return 0;
+// }
