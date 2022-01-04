@@ -3,13 +3,13 @@
 int read_reloc_table(FILE* file,Elf32Hdr header, Elf32_Shdr* sections, Elf32_Sym* symboles ){
     for(int i=0; i<header.e_shnum; i++){
         if(reverse_endianess(sections[i].sh_type)==4){
-            int taille= sections[i].sh_size;
-            int taillent= sections[i].sh_entsize;
-            int nbentrées= taille/taillent;
-            printf("Section de réadressage '%s' à l'adresse de décalage 0x%x contient %d entrées: \n", sections[i].sh_name, sections[i].sh_addr, nbentrées);
+            int taille= reverse_endianess(sections[i].sh_size);
+            int taillent= reverse_endianess(sections[i].sh_entsize);
+            int nbentrees= taille/taillent;
+            printf("Section de réadressage '%s' à l'adresse de décalage 0x%x contient %d entrées: \n", getSectionName(header,file,i), sections[i].sh_addr, nbentrees);
             printf("Décalage\t Info\t Type\t Val.-symboles\t Noms-symb.+ Addenda");
-            fseek(file,(sections[i].sh_addr+sections[i].sh_offset), SEEK_SET);
-            for(int j=0; j<nbentrées; j++){
+            fseek(file,(reverse_endianess(header.e_shoff) +i*(reverse_endianess(header.e_shentsize) >> 16)), SEEK_SET);
+            for(int j=0; j<nbentrees; j++){
                 Elf32_Rela rela;
                 fread(&rela, 1, sizeof(Elf32_Rela), file);
                 printf("%12x\t", reverse_endianess(rela.r_offset));
@@ -65,8 +65,8 @@ int read_reloc_table(FILE* file,Elf32Hdr header, Elf32_Shdr* sections, Elf32_Sym
                     }else {
                         printf("%12x\t", reverse_endianess(rela.r_addend));
                     }
-                    int nbSym= (reverse_endianess(rela.r_info)>>8);
-                    printf("%s + %d\n", symboles[nbSym].st_name, rela.r_addend);
+                    // int nbSym= (reverse_endianess(rela.r_info)>>8);
+                    // printf("%s + %d\n", symboles[nbSym].st_name, rela.r_addend);
                 }
             }
             printf("\n");
@@ -77,13 +77,15 @@ int read_reloc_table(FILE* file,Elf32Hdr header, Elf32_Shdr* sections, Elf32_Sym
 
 int main(int argc, char *argv[])
 {
-    FILE *file = fopen(argv[2], "rb");
+    FILE *file = fopen(argv[1], "rb");
     if(!file){
         printf("erreur de lecture");
     } else {
         Elf32Hdr header = read_elf_header(file);
         Elf32_Shdr* section = read_elf_section(file, header);
         Elf32_Sym* symbole;
+        read_reloc_table(file,header,section,symbole);
+        free(section);
     }
 
     fclose(file);

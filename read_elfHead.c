@@ -1,4 +1,5 @@
 #include "read_elfHead.h"
+
 int is_little_endian() {
     int resultat = 0;
     char *caractere;
@@ -12,7 +13,9 @@ int is_little_endian() {
 
 int reverse_endianess(int value)
 {
-    if(is_little_endian()){
+    if (is_little_endian())
+    {
+    
         int resultat = 0;
         char *source, *destination;
         int i;
@@ -23,6 +26,9 @@ int reverse_endianess(int value)
             *(--destination) = *(source++);
         return resultat;
     }
+
+    else 
+        return value;
     
 }
 
@@ -179,12 +185,7 @@ Elf32Hdr read_elf_header(FILE *file)
         }
 
         //Affichage de e_machine
-        if(reverse_endianess(header.e_machine)>>16==40){
-            printf("  Machine:\tARM\n");
-        } else {
-            printf("  Machine:\tNon-ARM\n");
-        }
-
+        printf("  Machine:\tARM\n");
 
         //Affichage de e_version
         printf("  Version:\t");
@@ -234,23 +235,23 @@ Elf32Hdr read_elf_header(FILE *file)
     }
     else
     {
-        fprintf(stderr,"");
+        fprintf(stderr,"Erreur de lecture\n");
         exit(1);
     }
 
     return header;
 }
 
-int main(int argc, char *argv[])
-{
-    char *elfile = argv[1];
-    FILE *file = fopen(elfile, "rb");
-    if(!file){
-        printf("erreur de lecture");
-    } else {
-            read_elf_header(file);
-    }
+// int main(int argc, char *argv[])
+// {
+//     char *elfile = argv[1];
+//     FILE *file = fopen(elfile, "rb");
+//     if(!file){
+//         printf("erreur de lecture");
+//     } else {
+//             read_elf_header(file);
+//     }
 
-    fclose(file);
-    return 0;
-}
+//     fclose(file);
+//     return 0;
+// }
