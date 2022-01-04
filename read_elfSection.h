@@ -23,4 +23,4 @@ typedef struct {
     ELF32_Word sh_entsize;
 } Elf32_Shdr;
 
-int read_elf_section(FILE *elfFile, Elf32Hdr header);
+Elf32_Shdr * read_elf_section(FILE *elfFile, Elf32Hdr header);

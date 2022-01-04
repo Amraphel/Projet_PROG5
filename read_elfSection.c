@@ -1,62 +1,57 @@
 #include "read_elfSection.h"
 
-int read_elf_section(FILE *elfFile, Elf32Hdr header)
+Elf32_Shdr * read_elf_section(FILE *elfFile, Elf32Hdr header)
 {
-    /*
-    Elf32_Shdr section;
-
-    fseek(elfFile, header.e_shoff + header.e_shstrndx * header.e_shentsize, SEEK_SET);
-    fread(&section, 1, sizeof(section), elfFile);
-    char* SectNames = NULL;
-    SectNames = malloc(section.sh_size);
-    fseek(elfFile, section.sh_offset, SEEK_SET);
-    fread(SectNames, 1, section.sh_size, elfFile);
-
-    for (int idx = 0; idx < header.e_shnum; idx++){
-        char* name = "";
-
-        fseek(elfFile, header.e_shoff + idx * sizeof(section), SEEK_SET);
-        fread(&section, 1, sizeof(section), elfFile);
-
-        // print section name
-        if (section.sh_name);
-        name = SectNames + section.sh_name;
-            
-        printf("%i %s\n", idx, name);
-    }
-    */
-
-    Elf32_Shdr section[header.e_shnum];
-    // char* stringTable = NULL;
+    Elf32_Shdr * section = NULL;
+    section = malloc(sizeof(Elf32_Shdr) * (reverse_endianess(header.e_shnum) >> 16));
 
     printf("\nIl y a %d en-têtes de section, débutant à l'adresse de décalage 0x%02x: \n", reverse_endianess(header.e_shnum) >> 16, reverse_endianess(header.e_shoff));
     printf("En-têtes de section :\n");
-    printf("  [Nr]\tNom\tType\t  Adr\tDécala.\tTaille\tES\tFan\tLN\tInf\tAl\n");
-
-    // fseek(elfFile, reverse_endianess(header.e_shoff) + (reverse_endianess(header.e_shstrndx) >> 16), SEEK_SET);
-    // fread(&stringTable, 1, sizeof(Elf32_Shdr), elfFile);
+    printf("%2s\t%12s\t%9s\t%8s\t%6s\t%6s\t%2s\t%3s\t%2s\t%3s\t%2s","[Nr]","Nom","Type","Adr","Décala.","Taille","ES","Fan","LN","Inf","Al"); //\t  Adr\tDécala.\tTaille\tES\tFan\tLN\tInf\tAl\n
+    printf("\n");
 
     fseek(elfFile, reverse_endianess(header.e_shoff), SEEK_SET);
+
+
 
     for (size_t i = 0; i < reverse_endianess(header.e_shnum) >> 16; i++) {
         fread(&section[i], 1, sizeof(Elf32_Shdr), elfFile);
     }
+
+    //section name
+    Elf32_Shdr sectionStrTab;
+
+    fseek(elfFile, reverse_endianess(header.e_shoff) + (reverse_endianess(header.e_shstrndx) >> 16) * (reverse_endianess(header.e_shentsize) >> 16), SEEK_SET);
+    fread(&sectionStrTab, 1, sizeof(Elf32_Shdr), elfFile);
+    char* SectNames = NULL;
+    SectNames = malloc(reverse_endianess(sectionStrTab.sh_size));
+    fseek(elfFile, reverse_endianess(sectionStrTab.sh_offset), SEEK_SET);
+    fread(SectNames, 1, reverse_endianess(sectionStrTab.sh_size), elfFile);
+
+    char* name = "";
 
     char * type = NULL;
 
 
     for (size_t i = 0; i < reverse_endianess(header.e_shnum) >> 16; i++)
     {
-        printf("  [%ld]\t",i);
+        //number
+        printf("[%2ld]\t",i);
 
-        // printf("%4d '%s'\n", reverse_endianess(section[i].sh_name),
-        //     stringTable + reverse_endianess(section[i].sh_name));
+        //section name
+        fseek(elfFile, reverse_endianess(header.e_shoff) + i * sizeof(Elf32_Shdr), SEEK_SET);
+        fread(&sectionStrTab, 1, sizeof(Elf32_Shdr), elfFile);
 
-        if (i == (reverse_endianess(header.e_shnum) >> 16) -1)
-        {
-            printf("%x",section[i].sh_name);
+        // print section name
+        if (reverse_endianess(sectionStrTab.sh_name));
+        name = SectNames + reverse_endianess(sectionStrTab.sh_name);
+
+        if (reverse_endianess(sectionStrTab.sh_name)){
+            printf("%12s\t",name);
+        }else{
+            printf("%12s\t","");
         }
-        
+
         
         // Type
         switch (reverse_endianess(section[i].sh_type))
@@ -129,12 +124,12 @@ int read_elf_section(FILE *elfFile, Elf32Hdr header)
                 break;
             }
 
-            printf("%s       ",type);
+        printf("%9s\t",type);
         
-        printf("%08x ",reverse_endianess(section[i].sh_addr));
-        printf("%06x ",reverse_endianess(section[i].sh_offset));
-        printf("%06x ",reverse_endianess(section[i].sh_size));
-        printf("%02x ",reverse_endianess(section[i].sh_entsize));
+        printf("%08x\t",reverse_endianess(section[i].sh_addr));
+        printf("%06x\t",reverse_endianess(section[i].sh_offset));
+        printf("%06x\t",reverse_endianess(section[i].sh_size));
+        printf("%02x\t",reverse_endianess(section[i].sh_entsize));
 
         char flag[4];
         int flag_ind = -1;
@@ -145,9 +140,7 @@ int read_elf_section(FILE *elfFile, Elf32Hdr header)
         long int flagValue;
         flagValue = reverse_endianess(section[i].sh_flags);
         if(flagValue){
-            // printf("\n");
             while(flagValue > 0 && j >= 0){
-                // printf("listFlag %li   flagValue %li",listFlag[j], flagValue);
                 if(listFlag[j] <= flagValue){
                     flag_ind++;
                     flagValue = flagValue - listFlag[j];
@@ -214,21 +207,25 @@ int read_elf_section(FILE *elfFile, Elf32Hdr header)
                 printf("%c",flag[flag_ind]);
                 flag_ind--;
             }
+            printf("\t");
         }else{
-            printf("  ");
+            printf("%3s\t","");
         }
 
+        printf("%2d\t",reverse_endianess(section[i].sh_link));
+        printf("%3d\t",reverse_endianess(section[i].sh_info));
+        printf("%2d\t",reverse_endianess(section[i].sh_addralign));
 
-        printf("%2d ",reverse_endianess(section[i].sh_link));
-        printf("%2d ",reverse_endianess(section[i].sh_info));
-        printf("%2d ",reverse_endianess(section[i].sh_addralign));
-
-
-
+        
         printf("\n");
     }
 
-    return 0;
+    free(SectNames);
+    
+    printf("Clé des fanions :\nW (écriture), A (allocation), X (exécution),\nM (fusion), S (chaînes), I (info),L (ordre des liens), O (traitement supplémentaire par l'OS requis),\nG (groupe),T (TLS), C (compressé), x (inconnu), o (spécifique à l'OS), E (exclu),y (purecode), p (processor specific)");
+    printf("\n");
+
+    return section;
 }
 
 int main(int argc, char *argv[])
@@ -238,7 +235,9 @@ int main(int argc, char *argv[])
         printf("erreur de lecture");
     } else {
         Elf32Hdr header = read_elf_header(file);
-        read_elf_section(file, header);
+        Elf32_Shdr * sect;
+        sect = read_elf_section(file, header);
+        free(sect);
     }
 
     fclose(file);
