@@ -241,16 +241,16 @@ Elf32Hdr read_elf_header(FILE *file)
     return header;
 }
 
-int main(int argc, char *argv[])
-{
-    char *elfile = argv[1];
-    FILE *file = fopen(elfile, "rb");
-    if(!file){
-        printf("erreur de lecture");
-    } else {
-            read_elf_header(file);
-    }
+// int main(int argc, char *argv[])
+// {
+//     char *elfile = argv[1];
+//     FILE *file = fopen(elfile, "rb");
+//     if(!file){
+//         printf("erreur de lecture");
+//     } else {
+//             read_elf_header(file);
+//     }
 
-    fclose(file);
-    return 0;
-}
+//     fclose(file);
+//     return 0;
+// }
