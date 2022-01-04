@@ -1,18 +1,12 @@
 #include "read_elfHead.h"
-int is_little_endian() {
-    int resultat = 0;
-    char *caractere;
-    int entier;
-
-    entier = 1;
-    caractere = (char *) &entier;
-    resultat = *caractere;
-    return resultat;
+int is_little_endian(Elf32Hdr header) {
+    return header.e_ident[5]==2;
+    
 }
 
-int reverse_endianess(int value)
+int reverse_endianess(int value,Elf32Hdr header, int half )
 {
-    if(is_little_endian()){
+    if(is_little_endian(header)){
         int resultat = 0;
         char *source, *destination;
         int i;
@@ -21,7 +15,14 @@ int reverse_endianess(int value)
         destination = ((char *)&resultat) + sizeof(int);
         for (i = 0; i < sizeof(int); i++)
             *(--destination) = *(source++);
-        return resultat;
+        if(half==1){
+            return resultat>>16;
+        } else {
+            return resultat;
+        }
+
+    } else {
+        return value;
     }
     
 }
@@ -35,9 +36,9 @@ Elf32Hdr read_elf_header(FILE *file)
         header.e_ident[2] == 'L' &&
         header.e_ident[3] == 'F')
     {
-        printf("En-tête ELF:\n");
+        printf("%33s\n","En-tête ELF :");
         //Affichage de e_ident
-        printf("  Magique: ");
+        printf("  %35s\t", "Magique:");
         for (int i = 0; i < 16; i++)
         {
             printf(" %02x", header.e_ident[i]);
@@ -45,7 +46,7 @@ Elf32Hdr read_elf_header(FILE *file)
         printf("\n");
 
         //Affichage de EI_CLASS
-        printf("  Classe:\t");
+        printf("  %35s\t","Classe:");
         switch (header.e_ident[4])
         {
         case 0:
@@ -62,7 +63,7 @@ Elf32Hdr read_elf_header(FILE *file)
         }
 
         //Affichage de EI_DATA
-        printf("  Données:\t");
+        printf("  %35s\t","Données:");
         switch (header.e_ident[5])
         {
         case 0:
@@ -75,11 +76,12 @@ Elf32Hdr read_elf_header(FILE *file)
             printf("complément à 2, système à octets de poids fort d'abord (big endian)\n");
             break;
         default:
+            printf("\n");
             break;
         }
 
         //Affichage de EI_VERSION
-        printf("  Version:\t");
+        printf("  %35s\t","Version:");
         switch (header.e_ident[6])
         {
         case 0:
@@ -95,63 +97,64 @@ Elf32Hdr read_elf_header(FILE *file)
         }
 
         //Affichage de EI_OS
-        printf("  OS/ABI:\t");
+        printf("  %35s\t","OS/ABI:");
         switch (header.e_ident[7])
         {
         case 0:
-            printf("UNIX - System V\n");
+            printf("UNIX - System V");
             break;
         case 1:
-            printf("HP-UX\n");
+            printf("HP-UX");
             break;
         case 2:
-            printf("NetBSD\n");
+            printf("NetBSD");
             break;
         case 3:
-            printf("Linux\n");
+            printf("Linux");
             break;
         case 6:
-            printf("Sun Solaris\n");
+            printf("Sun Solaris");
             break;
         case 7:
-            printf("IBM AIX\n");
+            printf("IBM AIX");
             break;
         case 8:
-            printf("SGI Irix\n");
+            printf("SGI Irix");
             break;
         case 9:
-            printf("FreeBSD\n");
+            printf("FreeBSD");
             break;
         case 10:
-            printf("Compaq TRU64\n");
+            printf("Compaq TRU64");
             break;
         case 11:
-            printf("Novell Modesto\n");
+            printf("Novell Modesto");
             break;
         case 12:
-            printf("OpenBSD\n");
+            printf("OpenBSD");
             break;
         case 64:
-            printf("ARM EABI\n");
+            printf("ARM EABI");
             break;
         case 97:
-            printf("ARM\n");
+            printf("ARM");
             break;
         case 255:
-            printf("Standalone\n");
+            printf("Standalone");
             break;
         default:
             break;
         }
+        printf("\n");
 
         //Affichage EI_verABI
-        printf("  Version ABI:\t%d\n", header.e_ident[8]);
+        printf("  %35s\t%d\n","Version ABI:", header.e_ident[8]);
 
         //Affichage de e_type
-        printf("  Type:\t\t");
+        printf("  %35s\t","Type:");
 
         //printf("%08x\n",reverse_endianess(header.e_type)>>16 );
-        switch (reverse_endianess(header.e_type) >> 16)
+        switch (reverse_endianess(header.e_type, header, 1))
         {
         case 0x0:
             printf("NONE (pas de type)\n");
@@ -163,7 +166,7 @@ Elf32Hdr read_elf_header(FILE *file)
             printf("EXEC (fichier exécutable)\n");
             break;
         case 0x3:
-            printf("DYN (fichier partagé objet\n");
+            printf("DYN (fichier partagé objet)\n");
             break;
         case 0x4:
             printf("CORE (fichier coeur)\n");
@@ -179,18 +182,18 @@ Elf32Hdr read_elf_header(FILE *file)
         }
 
         //Affichage de e_machine
-        if(reverse_endianess(header.e_machine)>>16==40){
-            printf("  Machine:\tARM\n");
+        if(reverse_endianess(header.e_machine, header, 1)==40){
+            printf("  %35s\tARM\n","Machine:");
         } else {
-            printf("  Machine:\tNon-ARM\n");
+            printf("  %35s\tNon-ARM\n","Machine:");
         }
 
 
         //Affichage de e_version
-        printf("  Version:\t");
+        printf("  %35s\t","Version:");
 
-        //printf("%08x\n",header.e_version );
-        switch (reverse_endianess(header.e_version))
+        // printf("%08x\n",header.e_version );
+        switch (reverse_endianess(header.e_version, header, 0))
         {
         case (0x0):
             printf("0x0\n");
@@ -203,34 +206,35 @@ Elf32Hdr read_elf_header(FILE *file)
         }
 
         //Affichage de e_entry
-        printf("  Adresse du point d'entrée:\t 0x%02x \n", reverse_endianess(header.e_entry));
+        printf("  %35s\t 0x%02x \n","Adresse du point d'entrée:" ,reverse_endianess(header.e_entry, header,0));
 
         //Affichage de e_phoff
-        printf("  Début des en-têtes de programme: \t %d (octets dans le fichier)\n", reverse_endianess(header.e_phoff));
+        // printf("%08x\n",header.e_phoff) ;
+        printf("  %35s\t %d (octets dans le fichier)\n","Début des en-têtes de programme:", reverse_endianess(header.e_phoff, header,0));
 
         //Affichage de e_shoff
-        printf("  Début des en-têtes de section: \t %d (octets dans le fichier)\n", reverse_endianess(header.e_shoff));
+        printf("  %35s\t %d (octets dans le fichier)\n","Début des en-têtes de section:", reverse_endianess(header.e_shoff, header,0));
 
         //Affichage de e_flags
-        printf("  Fanions: \t0x%02x\n", reverse_endianess(header.e_flags));
+        printf("  %35s\t 0x%x\n","Fanions:", reverse_endianess(header.e_flags,header,0));
 
         //Affichage de e_ehsize
-        printf("  Taille de cet en-tête:\t %d (octets)\n", reverse_endianess(header.e_ehsize) >> 16);
+        printf("  %35s\t %d (octets)\n","Taille de cet en-tête:", reverse_endianess(header.e_ehsize,header,1));
 
         //Affichage de e_phentsize
-        printf("  Taille de l'en-tête du programme:\t %d (octets)\n", reverse_endianess(header.e_phentsize) >> 16);
+        printf("  %35s\t %d (octets)\n","Taille de l'en-tête du programme:" ,reverse_endianess(header.e_phentsize,header,1));
 
         //Affichage de e_phnum
-        printf("  Nombre d'en-tête du programme:\t %d\n", reverse_endianess(header.e_phnum) >> 16);
+        printf("  %35s\t %d\n","Nombre d'en-tête du programme:", reverse_endianess(header.e_phnum, header,1));
 
         //Affichage de e_shentsize
-        printf("  Taille des en-têtes de section:\t %d (octets)\n", reverse_endianess(header.e_shentsize) >> 16);
+        printf("  %35s\t %d (octets)\n","Taille des en-têtes de section:", reverse_endianess(header.e_shentsize,header,1));
 
         //Affichage de e_shnum
-        printf("  Nombre d'en-têtes de section:\t %d\n", reverse_endianess(header.e_shnum) >> 16);
+        printf("  %35s\t %d\n","Nombre d'en-têtes de section:", reverse_endianess(header.e_shnum,header,1));
 
         //Affichage de e_shstrndx
-        printf("  Table d'indexes des chaînes d'en-tête de section:\t %d\n", reverse_endianess(header.e_shstrndx) >> 16);
+        printf("  Table d'indexes des chaînes d'en-tête de section:\t %d\n", reverse_endianess(header.e_shstrndx,header,1));
     }
     else
     {

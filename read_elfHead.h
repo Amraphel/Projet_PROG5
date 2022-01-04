@@ -25,8 +25,8 @@ typedef struct {
   ELF32_Half     e_shstrndx;          /* Section header string table index */
 } Elf32Hdr; 
 
-int is_little_endian();
+int is_little_endian(Elf32Hdr header);
 
-int reverse_endianess(int value);
+int reverse_endianess(int value,Elf32Hdr header, int half );
 
 Elf32Hdr read_elf_header(FILE *file);
