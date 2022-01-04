@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 #include "read_elfHead.h"
 
 typedef uint32_t ELF32_Addr ;
@@ -22,4 +23,4 @@ typedef struct {
     ELF32_Word sh_entsize;
 } Elf32_Shdr;
 
-Elf32_Shdr* read_elf_section(FILE *elfFile, Elf32Hdr header);
+Elf32_Shdr * read_elf_section(FILE *elfFile, Elf32Hdr header);
