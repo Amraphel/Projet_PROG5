@@ -1,4 +1,4 @@
-#include "read_elfSection.h"
+#include "read_sectiondata.h"
 
 char * getSectionName(Elf32Hdr header, FILE* elfFile, int i){
 
