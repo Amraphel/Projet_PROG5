@@ -4,21 +4,21 @@ char * getSectionName(Elf32Hdr header, FILE* elfFile, int i){
 
     Elf32_Shdr sectionStrTab;
 
-    fseek(elfFile, reverse_endianess(header.e_shoff) + (reverse_endianess(header.e_shstrndx) >> 16) * (reverse_endianess(header.e_shentsize) >> 16), SEEK_SET);
+    fseek(elfFile, reverse_endianess(header.e_shoff,header,0) + (reverse_endianess(header.e_shstrndx,header,1)) * (reverse_endianess(header.e_shentsize,header,1)), SEEK_SET);
     fread(&sectionStrTab, 1, sizeof(Elf32_Shdr), elfFile);
     char* SectNames = NULL;
-    SectNames = malloc(reverse_endianess(sectionStrTab.sh_size));
-    fseek(elfFile, reverse_endianess(sectionStrTab.sh_offset), SEEK_SET);
-    fread(SectNames, 1, reverse_endianess(sectionStrTab.sh_size), elfFile);
+    SectNames = malloc(reverse_endianess(sectionStrTab.sh_size, header, 0));
+    fseek(elfFile, reverse_endianess(sectionStrTab.sh_offset,header, 0), SEEK_SET);
+    fread(SectNames, 1, reverse_endianess(sectionStrTab.sh_size,header, 0), elfFile);
 
     char* name = "";
     //section name
-    fseek(elfFile, reverse_endianess(header.e_shoff) + i * sizeof(Elf32_Shdr), SEEK_SET);
+    fseek(elfFile, reverse_endianess(header.e_shoff,header, 0) + i * sizeof(Elf32_Shdr), SEEK_SET);
     fread(&sectionStrTab, 1, sizeof(Elf32_Shdr), elfFile);
 
         // print section name
-    if (reverse_endianess(sectionStrTab.sh_name));
-    name = SectNames + reverse_endianess(sectionStrTab.sh_name);
+    if (reverse_endianess(sectionStrTab.sh_name,header, 0));
+        name = SectNames + reverse_endianess(sectionStrTab.sh_name,header, 0);
     return name;
 }
 
@@ -30,7 +30,7 @@ int read_elf_section_data(char * a,Elf32Hdr header, Elf32_Shdr * sections, FILE*
     Elf32_Shdr sec;
     printf("%s", i2);
     //On vérifie que la section existe bien
-    while(i<reverse_endianess(header.e_shnum) && test==0){
+    while(i<reverse_endianess(header.e_shnum,header, 0) && test==0){
         if(strcmp(a, getSectionName(header,file,i))==0 || strcmp(a,i2)==0){
             test=1;
         }else{
@@ -43,18 +43,18 @@ int read_elf_section_data(char * a,Elf32Hdr header, Elf32_Shdr * sections, FILE*
         printf("AVERTISSEMENT: LA section %s n'a pas été vidangée parce qu'inexistante !\n", a);
     } else {
         //On vérifie que la section contient des données
-        int taille = reverse_endianess(sections[i].sh_size);
+        int taille = reverse_endianess(sections[i].sh_size,header, 0);
         if(taille==0){
         printf("La section « %s » n'a pas de données à vidanger .\n", getSectionName(header,file,i));
     } else{
         printf("Vidange hexadécimale de la section « %s » :\n",  getSectionName(header,file,i));
         //On se place à l'adresse de la section
-        fseek(file,(reverse_endianess(header.e_shoff) +i*(reverse_endianess(header.e_shentsize) >> 16)), SEEK_SET);
+        fseek(file,(reverse_endianess(header.e_shoff,header, 0) +i*(reverse_endianess(header.e_shentsize,header, 1) )), SEEK_SET);
         //On stocke les données dans un tableau 
         uint8_t tab[taille];
         fread(&sec, 1, sizeof(Elf32_Shdr), file);
-        uint32_t addr = reverse_endianess(sections[i].sh_addr) ;
-        fseek(file, reverse_endianess(sec.sh_offset), SEEK_SET);
+        uint32_t addr = reverse_endianess(sections[i].sh_addr,header, 0) ;
+        fseek(file, reverse_endianess(sec.sh_offset,header, 0), SEEK_SET);
         fread(tab, 1,taille,file);
         for(int i =0; i<=taille/16; i++){
             //On affiche l'adresse suivie des données
