@@ -1,12 +1,12 @@
 #include "read_elfHead.h"
-int is_little_endian(Elf32Hdr header) {
+int is_big_endian(Elf32Hdr header) {
     return header.e_ident[5]==2;
     
 }
 
 int reverse_endianess(int value,Elf32Hdr header, int half )
 {
-    if(is_little_endian(header)){
+    if(is_big_endian(header)){
         int resultat = 0;
         char *source, *destination;
         int i;
@@ -31,6 +31,11 @@ Elf32Hdr read_elf_header(FILE *file)
 {
     Elf32Hdr header;
     fread(&header, 1, sizeof(header), file);
+    
+    return header;
+}
+
+void print_ELF_header(Elf32Hdr header){
     if (header.e_ident[0] == 0x7f &&
         header.e_ident[1] == 'E' &&
         header.e_ident[2] == 'L' &&
@@ -70,7 +75,7 @@ Elf32Hdr read_elf_header(FILE *file)
             printf("NONE\n");
             break;
         case 1:
-            printf("complément à 2, système à octets de poids faible d'abord (little endian)\n");
+            printf("complément à 2, système à octets de poids faible d'abord (big endian)\n");
             break;
         case 2:
             printf("complément à 2, système à octets de poids fort d'abord (big endian)\n");
@@ -242,7 +247,6 @@ Elf32Hdr read_elf_header(FILE *file)
         exit(1);
     }
 
-    return header;
 }
 
 int main(int argc, char *argv[])
@@ -252,7 +256,8 @@ int main(int argc, char *argv[])
     if(!file){
         printf("erreur de lecture");
     } else {
-            read_elf_header(file);
+            Elf32Hdr header= read_elf_header(file);
+            print_ELF_header(header);
     }
 
     fclose(file);
