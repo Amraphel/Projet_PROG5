@@ -46,7 +46,7 @@ void print_ELF_header(Elf32Hdr header){
         printf("  %s\t", "Magique:");
         for (int i = 0; i < 16; i++)
         {
-            printf(" %-02x", header.e_ident[i]);
+            printf(" %02x", header.e_ident[i]);
         }
         printf("\n");
 
@@ -243,7 +243,7 @@ void print_ELF_header(Elf32Hdr header){
     }
     else
     {
-        fprintf(stderr,"");
+        fprintf(stderr,"Fichier pas ELF");
         exit(1);
     }
 

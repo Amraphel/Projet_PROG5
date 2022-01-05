@@ -1,34 +1,12 @@
 #include "read_sectiondata.h"
 
-char * getSectionName(Elf32Hdr header, FILE* elfFile, int i){
-
-    Elf32_Shdr sectionStrTab;
-
-    fseek(elfFile, reverse_endianess(header.e_shoff,header,0) + (reverse_endianess(header.e_shstrndx,header,1)) * (reverse_endianess(header.e_shentsize,header,1)), SEEK_SET);
-    fread(&sectionStrTab, 1, sizeof(Elf32_Shdr), elfFile);
-    char* SectNames = NULL;
-    SectNames = malloc(reverse_endianess(sectionStrTab.sh_size, header, 0));
-    fseek(elfFile, reverse_endianess(sectionStrTab.sh_offset,header, 0), SEEK_SET);
-    fread(SectNames, 1, reverse_endianess(sectionStrTab.sh_size,header, 0), elfFile);
-
-    char* name = "";
-    //section name
-    fseek(elfFile, reverse_endianess(header.e_shoff,header, 0) + i * sizeof(Elf32_Shdr), SEEK_SET);
-    fread(&sectionStrTab, 1, sizeof(Elf32_Shdr), elfFile);
-
-        // print section name
-    if (reverse_endianess(sectionStrTab.sh_name,header, 0));
-        name = SectNames + reverse_endianess(sectionStrTab.sh_name,header, 0);
-    return name;
-}
-
 int read_elf_section_data(char * a,Elf32Hdr header, Elf32_Shdr * sections, FILE* file){
     printf("\n");
     int test=0;
     int i=0;
-    char* i2;
+    char* i2= malloc(sizeof(char*));
     Elf32_Shdr sec;
-    printf("%s", i2);
+    sprintf(i2, "%d", i);
     //On vérifie que la section existe bien
     while(i<reverse_endianess(header.e_shnum,header, 0) && test==0){
         if(strcmp(a, getSectionName(header,file,i))==0 || strcmp(a,i2)==0){
@@ -40,7 +18,7 @@ int read_elf_section_data(char * a,Elf32Hdr header, Elf32_Shdr * sections, FILE*
     }
     //La section n'existe pas
     if(test==0){
-        printf("AVERTISSEMENT: LA section %s n'a pas été vidangée parce qu'inexistante !\n", a);
+        printf("AVERTISSEMENT: La section %s n'a pas été vidangée parce qu'inexistante !\n", a);
     } else {
         //On vérifie que la section contient des données
         int taille = reverse_endianess(sections[i].sh_size,header, 0);
@@ -90,6 +68,7 @@ int read_elf_section_data(char * a,Elf32Hdr header, Elf32_Shdr * sections, FILE*
             addr += 16;
         }  
     }
+    free(i2);
     return 0;
     }
 }
@@ -108,7 +87,6 @@ int main(int argc, char *argv[])
         Elf32Hdr header = read_elf_header(file);
         Elf32_Shdr * sect;
         sect = read_elf_section(file, header);
-
         read_elf_section_data(argv[1],header,sect,file);
         free(sect);
 
