@@ -25,7 +25,7 @@ void print_elf_section(Elf32Hdr header, Elf32_Shdr * sections, FILE* elfFile){
 
     printf("Il y a %d en-têtes de section, débutant à l'adresse de décalage 0x%02x: \n\n", reverse_endianess(header.e_shnum, header, 1), reverse_endianess(header.e_shoff, header, 0));
     printf("En-têtes de section :\n");
-    printf("%2s\t%-15s\t%-14s\t%-8s\t%-6s\t%-6s\t%-2s\t%-3s\t%-2s\t%-3s\t%-2s","[Nr]","Nom","Type","Adr","Décala.","Taille","ES","Fan","LN","Inf","Al");
+    printf("%2s\t%-15s\t%-14s\t%-8s\t%6s\t%6s\t%2s\t%3s\t%2s\t%3s\t%2s","[Nr]","Nom","Type","Adr","Décala.","Taille","ES","Fan","LN","Inf","Al");
     printf("\n");
 
     char* name = "";
@@ -60,9 +60,9 @@ void print_elf_section(Elf32Hdr header, Elf32_Shdr * sections, FILE* elfFile){
         free(flag);
         printf("\t");
       
-        printf("%-2d\t",reverse_endianess(sections[i].sh_link, header, 0));
-        printf("%-3d\t",reverse_endianess(sections[i].sh_info, header, 0));
-        printf("%-2d\t",reverse_endianess(sections[i].sh_addralign, header, 0));
+        printf("%2d\t",reverse_endianess(sections[i].sh_link, header, 0));
+        printf("%3d\t",reverse_endianess(sections[i].sh_info, header, 0));
+        printf("%2d\t",reverse_endianess(sections[i].sh_addralign, header, 0));
 
         
         printf("\n");
@@ -181,7 +181,7 @@ char * get_section_type(ELF32_Word sh_type, char * name){
 }
 
 char * get_section_flag(ELF32_Word sh_flags, int * flag_ind){
-    char * flag = malloc(sizeof(char) * 5);
+    char * flag = malloc(sizeof(char)*3);
     int n = 15;
     *flag_ind = -1;
     int j = n-1;
@@ -191,11 +191,10 @@ char * get_section_flag(ELF32_Word sh_flags, int * flag_ind){
     flagValue = sh_flags;
     if(flagValue){
         while(flagValue > 0 && j >= 0){
-            (*flag_ind)++;
             if(listFlag[j] <= flagValue){
+                (*flag_ind)++;
                 flagValue = flagValue - listFlag[j];
                 tmp = listFlag[j];
-                
                 switch (tmp)
                 {
                     case 0x1:
@@ -247,13 +246,13 @@ char * get_section_flag(ELF32_Word sh_flags, int * flag_ind){
                         flag[*flag_ind] = 'x';
                         break;
                 }
-            }else{
-                flag[*flag_ind] = ' ';
+                
             }
             j--;
         }
-        
-            
+    }else{
+        (*flag_ind)++;
+        flag[*flag_ind] = ' ';      
     }
 
     return flag;
