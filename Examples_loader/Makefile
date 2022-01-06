@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 noinst_PROGRAMS = example1$(EXEEXT) \
 	example2$(EXEEXT) example3$(EXEEXT) \
-	example4$(EXEEXT)
+	example4$(EXEEXT) example5$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../m4/ax_check_compile_flag.m4 \
@@ -120,6 +120,10 @@ am__example4_SOURCES_DIST = example4.s
 am_example4_OBJECTS = example4.$(OBJEXT)
 example4_OBJECTS = $(am_example4_OBJECTS)
 example4_LDADD = $(LDADD)
+am__example5_SOURCES_DIST = example5.s
+am_example5_OBJECTS = example5.$(OBJEXT)
+example5_OBJECTS = $(am_example5_OBJECTS)
+example5_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -151,10 +155,10 @@ am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(example1_SOURCES) $(example2_SOURCES) $(example3_SOURCES) \
-	$(example4_SOURCES)
+	$(example4_SOURCES) $(example5_SOURCES)
 DIST_SOURCES = $(am__example1_SOURCES_DIST) \
 	$(am__example2_SOURCES_DIST) $(am__example3_SOURCES_DIST) \
-	$(am__example4_SOURCES_DIST)
+	$(am__example4_SOURCES_DIST) $(am__example5_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -316,6 +320,9 @@ example1_SOURCES = example1.s
 example2_SOURCES = example2.s
 example3_SOURCES = example3.s
 example4_SOURCES = example4.s
+example5_SOURCES = example5.s
+example6_SOURCES = example6.s
+example7_SOURCES = example7.s
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -388,6 +395,10 @@ example3$(EXEEXT): $(example3_OBJECTS) $(example3_DEPENDENCIES) $(EXTRA_example3
 example4$(EXEEXT): $(example4_OBJECTS) $(example4_DEPENDENCIES) $(EXTRA_example4_DEPENDENCIES) 
 	@rm -f example4$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(example4_OBJECTS) $(example4_LDADD) $(LIBS)
+
+example5$(EXEEXT): $(example5_OBJECTS) $(example5_DEPENDENCIES) $(EXTRA_example5_DEPENDENCIES) 
+	@rm -f example5$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example5_OBJECTS) $(example5_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

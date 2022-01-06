@@ -61,6 +61,8 @@ configure:2280: checking whether make supports nested variables
 configure:2297: result: yes
 configure:2431: checking whether make supports the include directive
 configure:2446: make -f confmf.GNU && cat confinc.out
+make: Warning: File 'confmf.GNU' has modification time 0.00034 s in the future
+make: warning:  Clock skew detected.  Your build may be incomplete.
 this is the am__doit target
 configure:2449: $? = 0
 configure:2468: result: yes (GNU style)
@@ -106,7 +108,7 @@ configure:2946: $? = 0
 configure:2968: result: 
 configure:2990: checking whether we are cross compiling
 configure:2998: arm-none-eabi-gcc -o conftest   -nostdlib -Wl,--entry=0 conftest.c  >&5
-/usr/lib/gcc/arm-none-eabi/7.3.1/../../../arm-none-eabi/bin/ld: /tmp/cc1DviHc.o: in function `main':
+/usr/lib/gcc/arm-none-eabi/7.3.1/../../../arm-none-eabi/bin/ld: /tmp/ccIybqPd.o: in function `main':
 conftest.c:(.text+0x14): undefined reference to `fopen'
 /usr/lib/gcc/arm-none-eabi/7.3.1/../../../arm-none-eabi/bin/ld: conftest.c:(.text+0x3c): undefined reference to `fclose'
 collect2: error: ld returned 1 exit status

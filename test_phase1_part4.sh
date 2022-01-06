@@ -27,5 +27,3 @@ for file in $FILES
             echo -e "${i} : ${GREEN}SUCCESS${NC}\n"
         fi
     done
-
-

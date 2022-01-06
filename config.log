@@ -141,11 +141,11 @@ configure:4054: checking lex output file root
 configure:4068: result: lex.yy
 configure:4073: checking lex library
 configure:4087: gcc -o conftest -g -O2   conftest.c   >&5
-/usr/bin/ld: /tmp/ccyhs40D.o: in function `input':
+/usr/bin/ld: /tmp/ccXRq4cy.o: in function `input':
 /home/b/benhaimk/Bureau/Projet_Prog5/Projet_PROG5/lex.yy.c:1180: undefined reference to `yywrap'
-/usr/bin/ld: /tmp/ccyhs40D.o: in function `yylex':
+/usr/bin/ld: /tmp/ccXRq4cy.o: in function `yylex':
 /home/b/benhaimk/Bureau/Projet_Prog5/Projet_PROG5/lex.yy.c:871: undefined reference to `yywrap'
-/usr/bin/ld: /tmp/ccyhs40D.o: in function `main':
+/usr/bin/ld: /tmp/ccXRq4cy.o: in function `main':
 /home/b/benhaimk/Bureau/Projet_Prog5/Projet_PROG5/conftest.l:17: undefined reference to `yywrap'
 collect2: error: ld returned 1 exit status
 configure:4087: $? = 1
