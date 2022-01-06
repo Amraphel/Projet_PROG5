@@ -24,3 +24,7 @@ typedef struct {
 } Elf32_Shdr;
 
 Elf32_Shdr * read_elf_section(FILE *elfFile, Elf32Hdr header);
+void print_elf_section(Elf32Hdr header, Elf32_Shdr * sections, FILE* elfFile);
+char * getSectionName(Elf32Hdr header, FILE* elfFile, int i);
+char * get_section_type(ELF32_Word sh_type, char * name);
+char * get_section_flag(ELF32_Word sh_flags, int * flag_ind);
