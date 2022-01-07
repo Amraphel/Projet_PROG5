@@ -48,5 +48,5 @@ unsigned char st_other;
 ELF32_Half st_shndx;
 } Elf32_Sym;
 
-unsigned char * renvoyer_nom_du_symbole(int indice, FILE * file);
+unsigned char * renvoyer_nom_du_symbole(int indice, FILE * file,Elf32Hdr header,Elf32_Shdr* tab_sec);
 void affiche_table_Symboles(FILE *file,Elf32_Shdr* tab_sec,Elf32Hdr header);

@@ -5,15 +5,12 @@
 #include <stdint.h>
 
 //---------------------------------------------------------------------------
-unsigned char * renvoyer_nom_du_symbole(int indice, FILE * file)
+unsigned char * renvoyer_nom_du_symbole(int indice, FILE * file,Elf32Hdr header,Elf32_Shdr* tab_sec)
 {
-    Elf32Hdr header;
-    fread(&header, 1, sizeof(header), file);
     int shnum =reverse_endianess(header.e_shnum,header,1);
     int shstrndx  =reverse_endianess(header.e_shstrndx,header,1);
     int i=0;
-    Elf32_Shdr* tab_sec =read_elf_section(file,header);
-    
+    printf(" ");
     Elf32_Shdr symtab;
     Elf32_Shdr strtab;
     Elf32_Sym symtable;
@@ -30,7 +27,7 @@ unsigned char * renvoyer_nom_du_symbole(int indice, FILE * file)
     fseek(file,reverse_endianess(strtab.sh_offset,header,0), SEEK_SET);
     unsigned char* strtable = (unsigned char *)malloc(sizeof(unsigned char)*reverse_endianess(strtab.sh_size,header,0));
     
-    fread(strtable, sizeof(char), strtab.sh_size, file);
+    fread(strtable, sizeof(char), reverse_endianess(strtab.sh_size,header,0), file);
     fseek(file,reverse_endianess(symtab.sh_offset,header,0), SEEK_SET);
     i=0;
     while(i<=indice)
@@ -40,6 +37,7 @@ unsigned char * renvoyer_nom_du_symbole(int indice, FILE * file)
     }
     //printf(" %s", strtable+(reverse_endianess(symtable.st_name)));
     return strtable+(reverse_endianess(symtable.st_name,header,0));
+    //free(tab_sec);
 }
 
 //---------------------------------------------------------------------------
@@ -68,7 +66,7 @@ void affiche_table_Symboles(FILE *file,Elf32_Shdr* tab_sec,Elf32Hdr header){
     fseek(file,reverse_endianess(strtab.sh_offset,header,0), SEEK_SET); // on se place au debut de la table des strings
     unsigned char* strtable = (unsigned char *)malloc(sizeof(unsigned char)*reverse_endianess(strtab.sh_size,header,0));
     
-    fread(strtable, sizeof(char), strtab.sh_size, file);
+    fread(strtable, sizeof(char), reverse_endianess(strtab.sh_size,header,0), file);
     fseek(file,reverse_endianess(symtab.sh_offset,header,0), SEEK_SET); // on se place au debut de la table des symboles
     taille=(reverse_endianess(symtab.sh_size,header,0)/reverse_endianess(symtab.sh_entsize,header,0)); // nombre de symboles
     
@@ -150,7 +148,7 @@ int main(int argc, char *argv[])
         fread(&header, 1, sizeof(header), file);
         Elf32_Shdr* tab_sec =read_elf_section(file,header);
         affiche_table_Symboles(file,tab_sec,header);
-        //unsigned char *valeur =renvoyer_nom_du_symbole(20,file);
+        //unsigned char *valeur =renvoyer_nom_du_symbole(21,file,header,tab_sec);
         //printf("%s",valeur);
         free(tab_sec);
     }

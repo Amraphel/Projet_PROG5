@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 noinst_PROGRAMS = example1$(EXEEXT) \
 	example2$(EXEEXT) example3$(EXEEXT) \
-	example4$(EXEEXT) example5$(EXEEXT)
+	example4$(EXEEXT) example5$(EXEEXT) example6$(EXEEXT) example7$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../m4/ax_check_compile_flag.m4 \
@@ -124,6 +124,14 @@ am__example5_SOURCES_DIST = example5.s
 am_example5_OBJECTS = example5.$(OBJEXT)
 example5_OBJECTS = $(am_example5_OBJECTS)
 example5_LDADD = $(LDADD)
+am__example6_SOURCES_DIST = example6.s
+am_example6_OBJECTS = example6.$(OBJEXT)
+example6_OBJECTS = $(am_example6_OBJECTS)
+example6_LDADD = $(LDADD)
+am__example7_SOURCES_DIST = example7.s
+am_example7_OBJECTS = example7.$(OBJEXT)
+example7_OBJECTS = $(am_example7_OBJECTS)
+example7_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -158,7 +166,8 @@ SOURCES = $(example1_SOURCES) $(example2_SOURCES) $(example3_SOURCES) \
 	$(example4_SOURCES) $(example5_SOURCES)
 DIST_SOURCES = $(am__example1_SOURCES_DIST) \
 	$(am__example2_SOURCES_DIST) $(am__example3_SOURCES_DIST) \
-	$(am__example4_SOURCES_DIST) $(am__example5_SOURCES_DIST)
+	$(am__example4_SOURCES_DIST) $(am__example5_SOURCES_DIST) \
+	$(am__example6_SOURCES_DIST) $(am__example7_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -399,6 +408,14 @@ example4$(EXEEXT): $(example4_OBJECTS) $(example4_DEPENDENCIES) $(EXTRA_example4
 example5$(EXEEXT): $(example5_OBJECTS) $(example5_DEPENDENCIES) $(EXTRA_example5_DEPENDENCIES) 
 	@rm -f example5$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(example5_OBJECTS) $(example5_LDADD) $(LIBS)
+
+example6$(EXEEXT): $(example6_OBJECTS) $(example6_DEPENDENCIES) $(EXTRA_example6_DEPENDENCIES) 
+	@rm -f example6$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example6_OBJECTS) $(example6_LDADD) $(LIBS)
+
+example7$(EXEEXT): $(example7_OBJECTS) $(example7_DEPENDENCIES) $(EXTRA_example7_DEPENDENCIES) 
+	@rm -f example7$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example7_OBJECTS) $(example7_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
