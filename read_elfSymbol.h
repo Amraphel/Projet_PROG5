@@ -51,6 +51,30 @@ typedef struct {
     ELF32_Half st_shndx;
 } Elf32_Sym;
 
+/*Fonction de lecture de la table des symboles
+Arguments:
+    -file : L'addresse de lecture du fichier 
+    -header : Le header du fichier
+    -tab_sec : Le tableau des sections du fichier
+Renvoie:
+    Un pointeur sur un tableau contenant les données de la tables des symboles
+*/
 Elf32_Sym*  renvoyer_table_sym(FILE * file, Elf32Hdr header , Elf32_Shdr* tab_sec);
+/*Fonction récupération du nom d'un symbole
+Arguments:
+    -indice : L'indice du symbole dont on affiche le nom
+    -file : L'addresse de lecture du fichier 
+    -header : Le header du fichier
+    -tab_sec : Le tableau des sections du fichier
+Renvoie:
+    Le nom de la symbole correspondant à l'indice souhaité
+*/
 unsigned char * renvoyer_nom_du_symbole(int indice, FILE * file,Elf32Hdr header,Elf32_Shdr* tab_sec);
+
+/*Fonction d'affichage de la table des symboles
+Arguments:
+    -file : L'addresse de lecture du fichier 
+    -tab_sec : Le tableau des sections du fichier
+    -header : Le header du fichier
+*/
 void affiche_table_Symboles(FILE *file,Elf32_Shdr* tab_sec,Elf32Hdr header);

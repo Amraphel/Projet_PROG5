@@ -16,7 +16,39 @@ typedef struct {
         ELF32_Sword     r_addend;
 } Elf32_Rela;
 
-void read_temp_reloc_table (FILE* file,Elf32Hdr header, Elf32_Shdr* sections, Elf32_Sym* sym);
-// Elf32_Rel** read_reloc_table(FILE* file,Elf32Hdr header, Elf32_Shdr* sections);
-// void print_sect_rel(FILE* file, Elf32Hdr header, Elf32_Shdr* sections,Elf32_Rel** tab, int nbsection, int* tab_entr);
-// void liberer_sect_rel(Elf32_Rel** tab, int nbsection);
+typedef struct {
+        int indice;
+        int taille;
+        Elf32_Rel* list_rel;
+} Tab_Rel;
+
+/*Fonction de récupération du nombre de section de réadressage
+Arguments:
+        -header : Le header du fichier
+        -sections : Le tableau des sections du fichier
+Revoie :
+        Le nombre de section de réadressage
+*/
+int get_number_reloc_sect(Elf32Hdr header, Elf32_Shdr * sections);
+
+/*Fonction de récupération des données des fonction de réadressage
+Arguments:
+        -file : l'addresse de lecture du fichier
+        -header : Le header du fichier
+        -sections : Le tableau des sections du fichier
+Renvoie:
+        Un tableau des contenant la liste des sections de réadressage, avec leur indice,
+        leur taille et la liste des réadressages qu'elles contiennent
+*/
+Tab_Rel* read_temp_reloc_table (FILE* file,Elf32Hdr header, Elf32_Shdr* sections);
+
+
+/*Fonction d'affichage de la table de réadressage
+Arguments:
+        -tab : Le tableau des sections de réadressage avec leur données
+        -header : Le header du fichier
+        -sections : La tableau des sections
+        -file : l'addresse de lecture du fichier
+        -sym : La table des symboles
+*/
+void print_reloc_table(Tab_Rel* tab, Elf32Hdr header, Elf32_Shdr* sections, FILE * file, Elf32_Sym* sym);

@@ -35,11 +35,149 @@ Elf32Hdr read_elf_header(FILE *file)
     return header;
 }
 
-void print_ELF_header(Elf32Hdr header){
-    if (header.e_ident[0] == 0x7f &&
+int verify_ELF(Elf32Hdr header){
+    return (header.e_ident[0] == 0x7f &&
         header.e_ident[1] == 'E' &&
         header.e_ident[2] == 'L' &&
-        header.e_ident[3] == 'F')
+        header.e_ident[3] == 'F');
+}
+
+char * getHclasse(Elf32Hdr header){
+    switch (header.e_ident[4])
+        {
+        case 0:
+            return("NONE");
+            break;
+        case 1:
+            return("ELF32");
+            break;
+        case 2:
+            return("ELF64");
+            break;
+        default:
+            return("\n");
+            break;
+        }
+}
+
+char * getHdata(Elf32Hdr header){
+    switch (header.e_ident[5])
+        {
+        case 0:
+            return("NONE");
+            break;
+        case 1:
+            return("complément à 2, système à octets de poids faible d'abord (big endian)");
+            break;
+        case 2:
+            return("complément à 2, système à octets de poids fort d'abord (big endian)");
+            break;
+        default:
+            return("\n");
+            break;
+        }
+}
+
+char * getHver(Elf32Hdr header){
+    switch (header.e_ident[6])
+        {
+        case 0:
+            return("0 (none)");
+            break;
+
+        case 1:
+            return("1 (current)");
+            break;
+
+        default:
+            return("\n");
+            break;
+        }
+}
+
+char * getHos(Elf32Hdr header){
+    switch (header.e_ident[7])
+        {
+        case 0:
+            return("UNIX - System V");
+            break;
+        case 1:
+            return("HP-UX");
+            break;
+        case 2:
+            return("NetBSD");
+            break;
+        case 3:
+            return("Linux");
+            break;
+        case 6:
+            return("Sun Solaris");
+            break;
+        case 7:
+            return("IBM AIX");
+            break;
+        case 8:
+            return("SGI Irix");
+            break;
+        case 9:
+            return("FreeBSD");
+            break;
+        case 10:
+            return("Compaq TRU64");
+            break;
+        case 11:
+            return("Novell Modesto");
+            break;
+        case 12:
+            return("OpenBSD");
+            break;
+        case 64:
+            return("ARM EABI");
+            break;
+        case 97:
+            return("ARM");
+            break;
+        case 255:
+            return("Standalone");
+            break;
+        default:
+            return("\n");
+            break;
+        }
+}
+
+char * getHtype(Elf32Hdr header){
+    switch (reverse_endianess(header.e_type, header, 1))
+    {
+    case 0x0:
+        return("NONE (pas de type)");
+        break;
+    case 0x1:
+        return("REL (fichier de réadressage)");
+        break;
+    case 0x2:
+        return("EXEC (fichier exécutable)");
+        break;
+    case 0x3:
+        return("DYN (fichier partagé objet)");
+        break;
+    case 0x4:
+        return("CORE (fichier coeur)");
+        break;
+    case 0xff00:
+        return("LOPROC ()");
+        break;
+    case 0xffff:
+        return("HIPROC ()");
+        break;
+    default:
+        return("\n");
+        break;
+    }
+}
+
+void print_ELF_header(Elf32Hdr header){
+    if (verify_ELF(header))
     {
         printf("%-33s\n","En-tête ELF :");
         //Affichage de e_ident
@@ -52,104 +190,19 @@ void print_ELF_header(Elf32Hdr header){
 
         //Affichage de EI_CLASS
         printf("  %-35s\t","Classe:");
-        switch (header.e_ident[4])
-        {
-        case 0:
-            printf("NONE\n");
-            break;
-        case 1:
-            printf("ELF32\n");
-            break;
-        case 2:
-            printf("ELF64\n");
-            break;
-        default:
-            break;
-        }
+        printf("%s\n", getHclasse(header));
 
         //Affichage de EI_DATA
         printf("  %-35s\t","Données:");
-        switch (header.e_ident[5])
-        {
-        case 0:
-            printf("NONE\n");
-            break;
-        case 1:
-            printf("complément à 2, système à octets de poids faible d'abord (big endian)\n");
-            break;
-        case 2:
-            printf("complément à 2, système à octets de poids fort d'abord (big endian)\n");
-            break;
-        default:
-            printf("\n");
-            break;
-        }
+        printf("%s\n", getHdata(header));
 
         //Affichage de EI_VERSION
         printf("  %-35s\t","Version:");
-        switch (header.e_ident[6])
-        {
-        case 0:
-            printf("0 (none)\n");
-            break;
-
-        case 1:
-            printf("1 (current)\n");
-            break;
-
-        default:
-            break;
-        }
+        printf("%s\n", getHver(header));
 
         //Affichage de EI_OS
         printf("  %-35s\t","OS/ABI:");
-        switch (header.e_ident[7])
-        {
-        case 0:
-            printf("UNIX - System V");
-            break;
-        case 1:
-            printf("HP-UX");
-            break;
-        case 2:
-            printf("NetBSD");
-            break;
-        case 3:
-            printf("Linux");
-            break;
-        case 6:
-            printf("Sun Solaris");
-            break;
-        case 7:
-            printf("IBM AIX");
-            break;
-        case 8:
-            printf("SGI Irix");
-            break;
-        case 9:
-            printf("FreeBSD");
-            break;
-        case 10:
-            printf("Compaq TRU64");
-            break;
-        case 11:
-            printf("Novell Modesto");
-            break;
-        case 12:
-            printf("OpenBSD");
-            break;
-        case 64:
-            printf("ARM EABI");
-            break;
-        case 97:
-            printf("ARM");
-            break;
-        case 255:
-            printf("Standalone");
-            break;
-        default:
-            break;
-        }
+        printf("%s", getHos(header));
         printf("\n");
 
         //Affichage EI_verABI
@@ -157,34 +210,8 @@ void print_ELF_header(Elf32Hdr header){
 
         //Affichage de e_type
         printf("  %-35s\t","Type:");
+        printf("%s\n", getHtype(header));
 
-        //printf("%08x\n",reverse_endianess(header.e_type)>>16 );
-        switch (reverse_endianess(header.e_type, header, 1))
-        {
-        case 0x0:
-            printf("NONE (pas de type)\n");
-            break;
-        case 0x1:
-            printf("REL (fichier de réadressage)\n");
-            break;
-        case 0x2:
-            printf("EXEC (fichier exécutable)\n");
-            break;
-        case 0x3:
-            printf("DYN (fichier partagé objet)\n");
-            break;
-        case 0x4:
-            printf("CORE (fichier coeur)\n");
-            break;
-        case 0xff00:
-            printf("LOPROC ()\n");
-            break;
-        case 0xffff:
-            printf("HIPROC ()\n");
-            break;
-        default:
-            break;
-        }
 
         //Affichage de e_machine
         if(reverse_endianess(header.e_machine, header, 1)==40){
@@ -197,7 +224,6 @@ void print_ELF_header(Elf32Hdr header){
         //Affichage de e_version
         printf("  %-35s\t","Version:");
 
-        // printf("%08x\n",header.e_version );
         switch (reverse_endianess(header.e_version, header, 0))
         {
         case (0x0):

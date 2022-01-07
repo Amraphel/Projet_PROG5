@@ -1,8 +1,5 @@
 #include "read_relocation_table.h"
 
-int taille_sect_data;
-int test_sect_data;
-int indice_sect_data;
 
 int main(int argc, char *argv[]){
     FILE *file = fopen(argv[1], "rb");
@@ -14,14 +11,14 @@ int main(int argc, char *argv[]){
 		Elf32Hdr header = read_elf_header(file); //lecture partie 1
         sect = read_elf_section(file, header); // lecture partie 2
         Elf32_Sym * sym = renvoyer_table_sym(file,header,sect);
-		//fonction lecture partie 5 (quand elle sera finie)
+		Tab_Rel* tab_reloc= read_temp_reloc_table(file, header, sect);
 
 		//on considère que s'il n'y a pas d'options ajoutées, on affiche tout
 		if (argc==2){ 
 			print_ELF_header(header); //part 1
 			print_elf_section(header,sect,file);//part 2
 			// pas de part 3 car nécessite une option
-            read_temp_reloc_table(file,header,sect,sym);
+            print_reloc_table(tab_reloc,header,sect,file,sym);
 			affiche_table_Symboles(file, sect ,header);//part 4
 			// print_reloc_table (fonction afficahge partie 5)
 		}
@@ -31,7 +28,7 @@ int main(int argc, char *argv[]){
 			if (*argv[2] == 'x'){
                 uint8_t* tab;
 				tab=read_elf_section_data(argv[3],header,sect,file);
-                print_sectiondata(file,argv[3],tab,header,sect,taille_sect_data,test_sect_data,indice_sect_data);
+                print_sectiondata(file,argv[3],tab,header,sect);
                 free(tab);}
 			else {
 				printf("Paramètres entrés non valides."); }
@@ -43,7 +40,7 @@ int main(int argc, char *argv[]){
 				case 'a': 	// on affiche tout
 						print_ELF_header(header); //part 1
 						print_elf_section(header,sect,file);//part 2
-                        read_temp_reloc_table(file, header, sect, sym);
+						print_reloc_table(tab_reloc, header, sect,file, sym);
 						affiche_table_Symboles(file, sect, header);//part 4
 						// print_reloc_table (fonction afficahge partie 5)
 						break;
@@ -57,7 +54,7 @@ int main(int argc, char *argv[]){
 						affiche_table_Symboles(file, sect, header);
 						break;
 				case 'r': // on affiche que la partie 5
-						read_temp_reloc_table(file,header,sect,sym);
+						print_reloc_table(tab_reloc, header, sect,file, sym);
 						break;
 				default : break;} }
 
@@ -66,6 +63,8 @@ int main(int argc, char *argv[]){
 			printf(" Le format est le suivant : ./programme nom_fichier option_1 option_2\n"); 
             }
             free(sect);
+			free(sym);
+			free(tab_reloc);
 		}
 
     fclose(file);
