@@ -1,6 +1,7 @@
 .global main
 .global data_global
 .text
+
 	mov r0, #0
 main:
 	mov r0, #1

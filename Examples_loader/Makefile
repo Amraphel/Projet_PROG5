@@ -162,8 +162,10 @@ AM_V_CCLD = $(am__v_CCLD_$(V))
 am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
+
 SOURCES = $(example1_SOURCES) $(example2_SOURCES) $(example3_SOURCES) \
-	$(example4_SOURCES) $(example5_SOURCES)
+	$(example4_SOURCES) $(example5_SOURCES) \
+	$(example6_SOURCES) $(example7_SOURCES)
 DIST_SOURCES = $(am__example1_SOURCES_DIST) \
 	$(am__example2_SOURCES_DIST) $(am__example3_SOURCES_DIST) \
 	$(am__example4_SOURCES_DIST) $(am__example5_SOURCES_DIST) \

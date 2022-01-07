@@ -1,7 +1,5 @@
 .data
-
 fibinput: .word 16
-
 fibnumber: .word 0
 .text
 .globl main

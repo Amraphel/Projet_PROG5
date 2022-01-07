@@ -1,6 +1,4 @@
-
 .data
-
 Number1: .word 12
 Number2: .word 43
 Number3: .word 25
@@ -30,4 +28,4 @@ CMP r4, r2
 BGE compDone
 MOV r4, r2
 compDone:
-MOV pc, r14 
+MOV pc, r14
