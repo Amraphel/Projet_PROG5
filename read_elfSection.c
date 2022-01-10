@@ -71,7 +71,7 @@ void print_elf_section(Elf32Hdr header, Elf32_Shdr * sections, FILE* elfFile){
     free(flag_ind);
     
     printf("Clé des fanions :\nW (écriture), A (allocation), X (exécution),M (fusion), S (chaînes), I (info),\nL (ordre des liens), O (traitement supplémentaire par l'OS requis),G (groupe),\nT (TLS), x (inconnu), o (spécifique à l'OS), E (exclu),\np (processor specific)");
-    printf("\n");
+    printf("\n\n");
 }
 
 char * getSectionName(Elf32Hdr header, FILE* elfFile, int i){

@@ -51,6 +51,8 @@ typedef struct {
     ELF32_Half st_shndx;
 } Elf32_Sym;
 
+int get_taille_table_symbole (FILE * file, Elf32_Shdr* tab_sec, Elf32Hdr header);
+
 /*Fonction de lecture de la table des symboles
 Arguments:
     -file : L'addresse de lecture du fichier 
@@ -77,4 +79,4 @@ Arguments:
     -tab_sec : Le tableau des sections du fichier
     -header : Le header du fichier
 */
-void affiche_table_Symboles(FILE *file,Elf32_Shdr* tab_sec,Elf32Hdr header);
+void affiche_table_Symboles(FILE *file,Elf32_Shdr* tab_sec,Elf32Hdr header, Elf32_Sym * tab_sym);

@@ -64,7 +64,7 @@ Tab_Rel* read_temp_reloc_table (FILE* file,Elf32Hdr header, Elf32_Shdr* sections
 void print_reloc_table(Tab_Rel* tab, Elf32Hdr header, Elf32_Shdr* sections, FILE * file, Elf32_Sym* sym){
     int nbReloc = get_number_reloc_sect(header, sections);
     if(nbReloc==0){
-        printf(" test\n");
+        printf("Il n'y a pas de réadressage dans ce fichier\n");
     } else {
         for(int i=0; i<nbReloc; i++){
             printf("Section de réadressage '%s' à l'adresse de décalage 0x%x contient %d entrées: \n", getSectionName(header,file,tab[i].indice), reverse_endianess(sections[tab[i].indice].sh_offset,header,0), tab[i].taille);
