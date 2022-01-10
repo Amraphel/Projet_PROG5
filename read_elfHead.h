@@ -26,6 +26,8 @@ typedef struct {
   ELF32_Half     e_shstrndx;          
 } Elf32Hdr; 
 
+int is_little_endian();
+
 /*Fonction de test du big endian
 Arguments:
   -header : Le header du fichier

@@ -23,6 +23,8 @@ typedef struct {
     ELF32_Word sh_entsize;
 } Elf32_Shdr;
 
+Elf32_Shdr lire_une_section(FILE* file, Elf32Hdr header);
+
 /*Fonction de stockage du tableau des sections
 Arguments:
     -elfFile : L'addresse de lecture du fichier 

@@ -1,12 +1,23 @@
 #include "read_elfHead.h"
-int is_big_endian(Elf32Hdr header) {
+int is_file_big_endian(Elf32Hdr header) {
     return header.e_ident[5]==2;
     
 }
 
+int is_little_endian() {
+    int resultat = 0;
+    char *caractere;
+    int entier;
+
+    entier = 1;
+    caractere = (char *) &entier;
+    resultat = *caractere;
+    return resultat;
+}
+
 int reverse_endianess(int value,Elf32Hdr header, int half )
 {
-    if(is_big_endian(header)){
+    if(is_file_big_endian(header) && is_little_endian){
         int resultat = 0;
         char *source, *destination;
         int i;
@@ -30,8 +41,65 @@ int reverse_endianess(int value,Elf32Hdr header, int half )
 Elf32Hdr read_elf_header(FILE *file)
 {
     Elf32Hdr header;
-    fread(&header, 1, sizeof(header), file);
+    // fread(&header, 1, sizeof(header), file);
+    unsigned char  e_ident[16];
+    fread(&e_ident,16, sizeof(unsigned char), file );
+
+    ELF32_Half     e_type;
+    fread(&e_type, 1, sizeof(ELF32_Half), file);  
+               
+    ELF32_Half     e_machine;   
+    fread(&e_machine, 1, sizeof(ELF32_Half), file);
+
+    ELF32_Word     e_version;        
+    fread(&e_version, 1, sizeof(ELF32_Word), file); 
+
+    ELF32_Addr     e_entry;      
+    fread(&e_entry, 1, sizeof(ELF32_Addr), file);   
+
+    ELF32_Off      e_phoff;       
+    fread(&e_phoff, 1, sizeof(ELF32_Off), file); 
+
+    ELF32_Off      e_shoff;           
+    fread(&e_shoff, 1, sizeof(ELF32_Off), file);   
+
+    ELF32_Word     e_flags;    
+    fread(&e_flags, 1, sizeof(ELF32_Word), file);   
+            
+    ELF32_Half     e_ehsize;  
+    fread(&e_ehsize, 1, sizeof(ELF32_Half), file);
+      
+    ELF32_Half     e_phentsize;   
+    fread(&e_phentsize, 1, sizeof(ELF32_Half), file);
+      
+    ELF32_Half     e_phnum;    
+    fread(&e_phnum, 1, sizeof(ELF32_Half), file);
+        
+    ELF32_Half     e_shentsize;
+    fread(&e_shentsize, 1, sizeof(ELF32_Half), file);
+         
+    ELF32_Half     e_shnum; 
+    fread(&e_shnum, 1, sizeof(ELF32_Half), file);
+            
+    ELF32_Half     e_shstrndx;
+    fread(&e_shstrndx, 1, sizeof(ELF32_Half), file);
     
+    for(int i=0; i<16; i++){
+        header.e_ident[i]=e_ident[i];
+    }
+    header.e_type=reverse_endianess(e_type,header,1);
+    header.e_machine= reverse_endianess(e_machine,header,1);
+    header.e_version= reverse_endianess(e_version,header,0);
+    header.e_entry=reverse_endianess(e_entry,header,0);
+    header.e_phoff=reverse_endianess(e_phoff,header,0);
+    header.e_shoff=reverse_endianess(e_shoff,header,0);
+    header.e_flags=reverse_endianess(e_flags,header,0);
+    header.e_ehsize=reverse_endianess(e_ehsize,header,0);
+    header.e_phentsize=reverse_endianess(e_phentsize,header,1);
+    header.e_phnum=reverse_endianess(e_phnum,header,1);
+    header.e_shentsize=reverse_endianess(e_shentsize,header,1);
+    header.e_shnum=reverse_endianess(e_shnum,header,1);
+    header.e_shstrndx=reverse_endianess(e_shstrndx,header,1);
     return header;
 }
 
@@ -147,7 +215,7 @@ char * getHos(Elf32Hdr header){
 }
 
 char * getHtype(Elf32Hdr header){
-    switch (reverse_endianess(header.e_type, header, 1))
+    switch (header.e_type)
     {
     case 0x0:
         return("NONE (pas de type)");
@@ -214,7 +282,7 @@ void print_ELF_header(Elf32Hdr header){
 
 
         //Affichage de e_machine
-        if(reverse_endianess(header.e_machine, header, 1)==40){
+        if(header.e_machine==40){
             printf("  %-35s\tARM\n","Machine:");
         } else {
             printf("  %-35s\tNon-ARM\n","Machine:");
@@ -224,7 +292,7 @@ void print_ELF_header(Elf32Hdr header){
         //Affichage de e_version
         printf("  %-35s\t","Version:");
 
-        switch (reverse_endianess(header.e_version, header, 0))
+        switch (header.e_version)
         {
         case (0x0):
             printf("0x0\n");
@@ -237,35 +305,35 @@ void print_ELF_header(Elf32Hdr header){
         }
 
         //Affichage de e_entry
-        printf("  %-35s\t 0x%02x \n","Adresse du point d'entrée:" ,reverse_endianess(header.e_entry, header,0));
+        printf("  %-35s\t 0x%02x \n","Adresse du point d'entrée:" ,header.e_entry);
 
         //Affichage de e_phoff
         // printf("%08x\n",header.e_phoff) ;
-        printf("  %-35s\t %d (octets dans le fichier)\n","Début des en-têtes de programme:", reverse_endianess(header.e_phoff, header,0));
+        printf("  %-35s\t %d (octets dans le fichier)\n","Début des en-têtes de programme:", header.e_phoff);
 
         //Affichage de e_shoff
-        printf("  %-35s\t %d (octets dans le fichier)\n","Début des en-têtes de section:", reverse_endianess(header.e_shoff, header,0));
+        printf("  %-35s\t %d (octets dans le fichier)\n","Début des en-têtes de section:", header.e_shoff);
 
         //Affichage de e_flags
-        printf("  %-35s\t 0x%x\n","Fanions:", reverse_endianess(header.e_flags,header,0));
+        printf("  %-35s\t 0x%x\n","Fanions:", header.e_flags);
 
         //Affichage de e_ehsize
-        printf("  %-35s\t %d (octets)\n","Taille de cet en-tête:", reverse_endianess(header.e_ehsize,header,1));
+        printf("  %-35s\t %d (octets)\n","Taille de cet en-tête:", header.e_ehsize);
 
         //Affichage de e_phentsize
-        printf("  %-35s\t %d (octets)\n","Taille de l'en-tête du programme:" ,reverse_endianess(header.e_phentsize,header,1));
+        printf("  %-35s\t %d (octets)\n","Taille de l'en-tête du programme:" ,header.e_phentsize);
 
         //Affichage de e_phnum
-        printf("  %-35s\t %d\n","Nombre d'en-tête du programme:", reverse_endianess(header.e_phnum, header,1));
+        printf("  %-35s\t %d\n","Nombre d'en-tête du programme:", header.e_phnum);
 
         //Affichage de e_shentsize
-        printf("  %-35s\t %d (octets)\n","Taille des en-têtes de section:", reverse_endianess(header.e_shentsize,header,1));
+        printf("  %-35s\t %d (octets)\n","Taille des en-têtes de section:",header.e_shentsize);
 
         //Affichage de e_shnum
-        printf("  %-35s\t %d\n","Nombre d'en-têtes de section:", reverse_endianess(header.e_shnum,header,1));
+        printf("  %-35s\t %d\n","Nombre d'en-têtes de section:",header.e_shnum);
 
         //Affichage de e_shstrndx
-        printf("  Table d'indexes des chaînes d'en-tête de section:\t %d\n", reverse_endianess(header.e_shstrndx,header,1));
+        printf("  Table d'indexes des chaînes d'en-tête de section:\t %d\n",header.e_shstrndx);
     }
     else
     {

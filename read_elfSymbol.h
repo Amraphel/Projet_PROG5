@@ -50,6 +50,7 @@ typedef struct {
     unsigned char st_other;
     ELF32_Half st_shndx;
 } Elf32_Sym;
+Elf32_Sym lire_un_symbole(FILE * file, Elf32Hdr header);
 
 int get_taille_table_symbole (FILE * file, Elf32_Shdr* tab_sec, Elf32Hdr header);
 

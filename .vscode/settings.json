@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "read_sectiondata.h": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }

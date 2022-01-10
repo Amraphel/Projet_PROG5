@@ -67,22 +67,24 @@ int main(int argc, char *argv[]){
 					print_ELF_header(header); }
 				if (option_S == 1){
 					print_elf_section(header,sect,file);
-					int* tab_renum= init_tab_renum(header);
-					Elf32_Shdr* sect2= renumerotation_table_section(header, sect, tab_renum);
-					print_elf_section(header,sect2,file);
-					free(sect2);
-					free(tab_renum); }
+					// int* tab_renum= init_tab_renum(header);
+					// Elf32_Shdr* sect2= renumerotation_table_section(header, sect, tab_renum);
+					// print_elf_section(header,sect2,file);
+					// free(sect2);
+					// free(tab_renum); 
+					}
 				if (option_x == 1){
 					print_sectiondata(file,valeur_x,tab,header,sect);
 					free(tab); }
 				if (option_s == 1){
-					int* tab_renum= init_tab_renum(header);
-					Elf32_Shdr* sect2= renumerotation_table_section(header, sect, tab_renum);
+					// int* tab_renum= init_tab_renum(header);
+					// Elf32_Shdr* sect2= renumerotation_table_section(header, sect, tab_renum);
 					affiche_table_Symboles(file,sect,header,sym);
-					renumerotation_table_symbole(file, sym, header, sect2, tab_renum);
-					affiche_table_Symboles(file,sect,header,sym);
-					free(sect2);
-					free(tab_renum); }
+					// renumerotation_table_symbole(file, sym, header, sect2, tab_renum);
+					// affiche_table_Symboles(file,sect,header,sym);
+					// free(sect2);
+					// free(tab_renum);
+					 }
 				if (option_r == 1){
 					print_reloc_table(tab_reloc,header,sect,file,sym); }
 				if (option_err == 1){
