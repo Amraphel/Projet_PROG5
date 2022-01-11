@@ -29,7 +29,7 @@ Arguments:
 Revoie :
         Le nombre de section de réadressage
 */
-int get_number_reloc_sect(Elf32Hdr header, Elf32_Shdr * sections);
+int get_number_reloc_sect(Elf32Hdr header, Tab_Sec * sections);
 
 /*Fonction de récupération des données des fonction de réadressage
 Arguments:
@@ -40,7 +40,7 @@ Renvoie:
         Un tableau des contenant la liste des sections de réadressage, avec leur indice,
         leur taille et la liste des réadressages qu'elles contiennent
 */
-Tab_Rel* read_temp_reloc_table (FILE* file,Elf32Hdr header, Elf32_Shdr* sections);
+Tab_Rel* read_temp_reloc_table (FILE* file,Elf32Hdr header, Tab_Sec* sections);
 
 
 /*Fonction d'affichage de la table de réadressage
@@ -51,4 +51,4 @@ Arguments:
         -file : l'addresse de lecture du fichier
         -sym : La table des symboles
 */
-void print_reloc_table(Tab_Rel* tab, Elf32Hdr header, Elf32_Shdr* sections, FILE * file, Elf32_Sym* sym);
+void print_reloc_table(Tab_Rel* tab, Elf32Hdr header, Tab_Sec* sections, FILE * file, Tab_Sym* sym);

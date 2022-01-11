@@ -1,5 +1,7 @@
 #include "read_elfSection.h"
 
+
+
 Elf32_Shdr lire_une_section(FILE* file, Elf32Hdr header){
     Elf32_Shdr sections;
 
@@ -36,17 +38,18 @@ Elf32_Shdr lire_une_section(FILE* file, Elf32Hdr header){
     return sections;
 }
 
-Elf32_Shdr * read_elf_section(FILE *file, Elf32Hdr header)
+Tab_Sec * read_elf_section(FILE *file, Elf32Hdr header)
 {
-    Elf32_Shdr * sections = NULL;
-    sections = malloc(sizeof(Elf32_Shdr) * header.e_shnum);
+    Tab_Sec * sections = NULL;
+    sections = malloc(sizeof(Tab_Sec) * header.e_shnum);
 
     if(sections){
     
         fseek(file, header.e_shoff, SEEK_SET);
 
         for (size_t i = 0; i < header.e_shnum; i++) {
-            sections[i]=lire_une_section(file, header);
+            sections[i].section=lire_une_section(file, header);
+            sections[i].name=getSectionName(header, file,i);
         }
     }else{
         fprintf(stderr,"Erreur malloc sections");
@@ -57,7 +60,7 @@ Elf32_Shdr * read_elf_section(FILE *file, Elf32Hdr header)
     return sections;
 }
 
-void print_elf_section(Elf32Hdr header, Elf32_Shdr * sections, FILE* elfFile){
+void print_elf_section(Elf32Hdr header, Tab_Sec * sections, FILE* elfFile){
 
     printf("Il y a %d en-têtes de section, débutant à l'adresse de décalage 0x%02x: \n\n", header.e_shnum, header.e_shoff);
     printf("En-têtes de section :\n");
@@ -72,20 +75,20 @@ void print_elf_section(Elf32Hdr header, Elf32_Shdr * sections, FILE* elfFile){
         printf("[%2ld]\t",i);
 
         //section name
-        name = getSectionName(header,elfFile,i);
+        name = sections[i].name;
         printf("%-20s\t",name);
         
         // Type
-        ELF32_Word type = sections[i].sh_type;
+        ELF32_Word type = sections[i].section.sh_type;
         char * typeAffich = get_section_type(type, name);
         printf("%-14s\t",typeAffich);
         
-        printf("%08x\t",sections[i].sh_addr);
-        printf("%06x\t",sections[i].sh_offset);
-        printf("%06x\t",sections[i].sh_size);
-        printf("%02x\t",sections[i].sh_entsize);
+        printf("%08x\t",sections[i].section.sh_addr);
+        printf("%06x\t",sections[i].section.sh_offset);
+        printf("%06x\t",sections[i].section.sh_size);
+        printf("%02x\t",sections[i].section.sh_entsize);
 
-        ELF32_Word sh_flags = sections[i].sh_flags;
+        ELF32_Word sh_flags = sections[i].section.sh_flags;
         char * flag = get_section_flag(sh_flags,flag_ind);
 
         while (*flag_ind >= 0)
@@ -96,9 +99,9 @@ void print_elf_section(Elf32Hdr header, Elf32_Shdr * sections, FILE* elfFile){
         free(flag);
         printf("\t");
       
-        printf("%-2d\t",sections[i].sh_link);
-        printf("%-3d\t",sections[i].sh_info);
-        printf("%-2d\t",sections[i].sh_addralign);
+        printf("%-2d\t",sections[i].section.sh_link);
+        printf("%-3d\t",sections[i].section.sh_info);
+        printf("%-2d\t",sections[i].section.sh_addralign);
 
         
         printf("\n");

@@ -1,16 +1,16 @@
 #include "read_relocation_table.h"
 
-int get_number_reloc_sect(Elf32Hdr header, Elf32_Shdr * sections){
+int get_number_reloc_sect(Elf32Hdr header, Tab_Sec* sections){
     int i=0;
     for(int k=0; k<header.e_shnum; k++){
-        if(sections[k].sh_type==9){
+        if(sections[k].section.sh_type==9){
             i++;
         }
     }
     return i;
 }
 
-Tab_Rel* read_temp_reloc_table (FILE* file,Elf32Hdr header, Elf32_Shdr* sections){
+Tab_Rel* read_temp_reloc_table (FILE* file,Elf32Hdr header, Tab_Sec* sections){
     int nbReloc = get_number_reloc_sect(header, sections);
     if(nbReloc!=0) {
         //On alloue la future table
@@ -19,13 +19,13 @@ Tab_Rel* read_temp_reloc_table (FILE* file,Elf32Hdr header, Elf32_Shdr* sections
         int indice=0;
         for(int k=0; k<header.e_shnum; k++){
             //Si la section est de type REL
-            if(sections[k].sh_type==9){
+            if(sections[k].section.sh_type==9){
                 char i2[8];
                 sprintf(i2, "%hu", k);
                 //On récupère les données de la section
                 uint8_t * tab_sec = read_elf_section_data(i2,header,sections,file);
-                int taille= sections[k].sh_size;
-                int taillent= sections[k].sh_entsize;
+                int taille= sections[k].section.sh_size;
+                int taillent= sections[k].section.sh_entsize;
                 //On récupère le nombre d'entrées dans la section
                 int nbentrees= taille/taillent;
                 //On stocke les données
@@ -61,13 +61,13 @@ Tab_Rel* read_temp_reloc_table (FILE* file,Elf32Hdr header, Elf32_Shdr* sections
 }
 
 
-void print_reloc_table(Tab_Rel* tab, Elf32Hdr header, Elf32_Shdr* sections, FILE * file, Elf32_Sym* sym){
+void print_reloc_table(Tab_Rel* tab, Elf32Hdr header, Tab_Sec* sections, FILE * file, Tab_Sym* sym){
     int nbReloc = get_number_reloc_sect(header, sections);
     if(nbReloc==0){
         printf("Il n'y a pas de réadressage dans ce fichier\n");
     } else {
         for(int i=0; i<nbReloc; i++){
-            printf("Section de réadressage '%s' à l'adresse de décalage 0x%x contient %d entrées: \n", getSectionName(header,file,tab[i].indice), sections[tab[i].indice].sh_offset, tab[i].taille);
+            printf("Section de réadressage '%s' à l'adresse de décalage 0x%x contient %d entrées: \n", getSectionName(header,file,tab[i].indice), sections[tab[i].indice].section.sh_offset, tab[i].taille);
             printf("%-8s %-8s %-12s %-15s %-12s\n","Décalage", "Info",  "Type", "Val.-sym",   "Noms-symboles");
             for(int j=0; j<tab[i].taille; j++){
                 
@@ -102,11 +102,11 @@ void print_reloc_table(Tab_Rel* tab, Elf32Hdr header, Elf32_Shdr* sections, FILE
                 }
                 printf("%-12s ", type);
 
-                printf("%08x%7s", sym[ELF32_R_SYM(tab[i].list_rel[j].r_info)].st_value,"");
-                if(ELF32_ST_TYPE(sym[ELF32_R_SYM(tab[i].list_rel[j].r_info)].st_info)==STT_SECTION){
-                printf("%-15s", getSectionName(header,file, sym[ELF32_R_SYM(tab[i].list_rel[j].r_info)].st_shndx));
+                printf("%08x%7s", sym[ELF32_R_SYM(tab[i].list_rel[j].r_info)].symbole.st_value,"");
+                if(ELF32_ST_TYPE(sym[ELF32_R_SYM(tab[i].list_rel[j].r_info)].symbole.st_info)==STT_SECTION){
+                printf("%-15s", getSectionName(header,file, sym[ELF32_R_SYM(tab[i].list_rel[j].r_info)].symbole.st_shndx));
                 } else{
-                    unsigned char * nom =renvoyer_nom_du_symbole(ELF32_R_SYM(tab[i].list_rel[j].r_info), file,header, sections);
+                    unsigned char * nom =sym[ELF32_R_SYM(tab[i].list_rel[j].r_info)].name;
                     printf("%-15s",nom);
                 }
 

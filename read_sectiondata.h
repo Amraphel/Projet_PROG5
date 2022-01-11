@@ -14,7 +14,7 @@ Arguments:
 Renvoie:
     Un tableau d'octets correspondant aux données de la section
 */
-uint8_t * read_elf_section_data(char * name,Elf32Hdr header, Elf32_Shdr * sections, FILE* file);
+uint8_t * read_elf_section_data(char * name,Elf32Hdr header, Tab_Sec * sections, FILE* file);
 
 
 /*Fonction de verification de la présence d'une section
@@ -35,7 +35,7 @@ Arguments:
 Renvoie:
     La taille de la section à vérifier
 */
-int verify_taille_sect(Elf32_Shdr* sections, int indice_sect_data, Elf32Hdr header);
+int verify_taille_sect(Tab_Sec* sections, int indice_sect_data, Elf32Hdr header);
 
 /*Fonction d'affichage des données de la section     
     -file : L'addresse de lecture du fichier 
@@ -44,4 +44,4 @@ int verify_taille_sect(Elf32_Shdr* sections, int indice_sect_data, Elf32Hdr head
     -header : Le header du fichier
     -sections : Le tableau des sections du fichier
 */
-void print_sectiondata(FILE* file,char * name, uint8_t * tab, Elf32Hdr header, Elf32_Shdr* sections);
+void print_sectiondata(FILE* file,char * name, uint8_t * tab, Elf32Hdr header, Tab_Sec* sections);

@@ -23,6 +23,12 @@ typedef struct {
     ELF32_Word sh_entsize;
 } Elf32_Shdr;
 
+typedef struct{
+    Elf32_Shdr section;
+    char* name;
+} Tab_Sec;
+
+
 Elf32_Shdr lire_une_section(FILE* file, Elf32Hdr header);
 
 /*Fonction de stockage du tableau des sections
@@ -32,14 +38,14 @@ Arguments:
 Renvoie:
     Un tableau contenant les sections du fichier
 */
-Elf32_Shdr * read_elf_section(FILE *elfFile, Elf32Hdr header);
+Tab_Sec * read_elf_section(FILE *elfFile, Elf32Hdr header);
 /*Fonction d'affichage des sections
 Arguments:
     -header : Le header du fichier
     -sections : Le tableau des sections du fichier
     -elfFile : L'addresse de lecture du fichier 
 */
-void print_elf_section(Elf32Hdr header, Elf32_Shdr * sections, FILE* elfFile);
+void print_elf_section(Elf32Hdr header, Tab_Sec * sections, FILE* elfFile);
 
 /*Fonction de récupération du nom de la section
 Arguments:

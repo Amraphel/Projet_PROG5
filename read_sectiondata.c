@@ -1,6 +1,6 @@
 #include "read_sectiondata.h"
 
-uint8_t* read_elf_section_data(char * name,Elf32Hdr header, Elf32_Shdr * sections, FILE* file){
+uint8_t* read_elf_section_data(char * name,Elf32Hdr header, Tab_Sec * sections, FILE* file){
     Elf32_Shdr sec;
     //On vérifie que la section existe bien
     
@@ -48,12 +48,12 @@ int verify_sect_data(char * name,FILE* file, Elf32Hdr header){
 
 }
 
-int verify_taille_sect(Elf32_Shdr* sections, int indice_sect_data, Elf32Hdr header){
-    return sections[indice_sect_data].sh_size;
+int verify_taille_sect(Tab_Sec* sections, int indice_sect_data, Elf32Hdr header){
+    return sections[indice_sect_data].section.sh_size;
 }
 
 
-void print_sectiondata(FILE* file,char * name, uint8_t * tab, Elf32Hdr header, Elf32_Shdr* sections) {
+void print_sectiondata(FILE* file,char * name, uint8_t * tab, Elf32Hdr header, Tab_Sec* sections) {
     int indice=verify_sect_data(name,file,header);
     if(indice==-1){
         printf("AVERTISSEMENT: La section %s n'a pas été vidangée parce qu'inexistante !\n", name);
@@ -63,7 +63,7 @@ void print_sectiondata(FILE* file,char * name, uint8_t * tab, Elf32Hdr header, E
         printf("La section « %s » n'a pas de données à vidanger .\n", getSectionName(header,file,indice));
         } else{
             printf("Vidange hexadécimale de la section « %s » :\n",  getSectionName(header,file,indice));
-            uint32_t addr =sections[indice].sh_addr ;
+            uint32_t addr =sections[indice].section.sh_addr ;
             for(int i =0; i<=taille/16; i++){
                 //On affiche l'adresse suivie des données
                 printf("  0x%08x ", addr);

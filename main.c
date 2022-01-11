@@ -53,13 +53,13 @@ int main(int argc, char *argv[]){
 					i++; }
 
 				// on appelle les fonctions de lecture
-	        	Elf32_Shdr * sect;
+	        	Tab_Sec * sect;
 				uint8_t *tab;
 				Elf32Hdr header = read_elf_header(file); //lecture partie 1
    		     	sect = read_elf_section(file, header); // lecture partie 2
 				if (option_x == 1){ // on ne lit dans la partie 3 que si l'option est activée
 					tab = read_elf_section_data(valeur_x,header,sect,file); } 
-				Elf32_Sym * sym = renvoyer_table_sym(file,header,sect); //lecture partie 4
+				Tab_Sym * sym = renvoyer_table_sym(file,header,sect); //lecture partie 4
 				Tab_Rel* tab_reloc= read_temp_reloc_table(file,header,sect);
 
 				// on affiche seulement les parties dont les options ont été mises
@@ -67,11 +67,11 @@ int main(int argc, char *argv[]){
 					print_ELF_header(header); }
 				if (option_S == 1){
 					print_elf_section(header,sect,file);
-					// int* tab_renum= init_tab_renum(header);
-					// Elf32_Shdr* sect2= renumerotation_table_section(header, sect, tab_renum);
-					// print_elf_section(header,sect2,file);
-					// free(sect2);
-					// free(tab_renum); 
+					int* tab_renum= init_tab_renum(header);
+					Tab_Sec* sect2= renumerotation_table_section(&header, sect, tab_renum);
+					print_elf_section(header,sect2,file);
+					free(sect2);
+					free(tab_renum); 
 					}
 				if (option_x == 1){
 					print_sectiondata(file,valeur_x,tab,header,sect);

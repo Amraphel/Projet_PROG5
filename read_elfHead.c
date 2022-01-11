@@ -17,7 +17,7 @@ int is_little_endian() {
 
 int reverse_endianess(int value,Elf32Hdr header, int half )
 {
-    if(is_file_big_endian(header) && is_little_endian){
+    if(is_file_big_endian(header) && is_little_endian()){
         int resultat = 0;
         char *source, *destination;
         int i;

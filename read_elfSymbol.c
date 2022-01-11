@@ -5,13 +5,15 @@
 #include <stdint.h>
 
 //---------------------------------------------------------------------------
-int get_taille_table_symbole (FILE * file, Elf32_Shdr* tab_sec, Elf32Hdr header){
+
+
+int get_taille_table_symbole (FILE * file, Tab_Sec* tab_sec, Elf32Hdr header){
     int shnum =header.e_shnum;
     int i=0;
-    Elf32_Shdr symtab=tab_sec[0];
+    Elf32_Shdr symtab=tab_sec[0].section;
     for(i=0;i<shnum;i++){   
-        if(tab_sec[i].sh_type==SHT_SYMTAB) {
-            symtab=tab_sec[i];
+        if(tab_sec[i].section.sh_type==SHT_SYMTAB) {
+            symtab=tab_sec[i].section;
         }
 
     }
@@ -51,14 +53,14 @@ Elf32_Sym lire_un_symbole(FILE * file, Elf32Hdr header){
     return symbole;
 }
 
-Elf32_Sym*  renvoyer_table_sym(FILE * file, Elf32Hdr header , Elf32_Shdr* tab_sec)
+Tab_Sym*  renvoyer_table_sym(FILE * file, Elf32Hdr header , Tab_Sec* tab_sec)
 {
     int shnum =header.e_shnum;
     int i=0;
-    Elf32_Shdr symtab=tab_sec[0];
+    Elf32_Shdr symtab=tab_sec[0].section;
     for(i=0;i<shnum;i++){   
-        if(tab_sec[i].sh_type==SHT_SYMTAB) {
-            symtab=tab_sec[i];
+        if(tab_sec[i].section.sh_type==SHT_SYMTAB) {
+            symtab=tab_sec[i].section;
         }
 
     }
@@ -66,31 +68,31 @@ Elf32_Sym*  renvoyer_table_sym(FILE * file, Elf32Hdr header , Elf32_Shdr* tab_se
     i=0;
     int taille=(symtab.sh_size/symtab.sh_entsize);
 
-    Elf32_Sym* symtable = malloc(sizeof(Elf32_Sym)*taille);
+    Tab_Sym* symtable = malloc(sizeof(Tab_Sym)*taille);
     Elf32_Sym sym;
 
     while(i<taille){
         sym= lire_un_symbole(file, header);
-        symtable[i]=sym;
+        symtable[i].symbole=sym;
+        symtable[i].name=renvoyer_nom_du_symbole(i,file,header,tab_sec);
         i++;
     }
     return symtable;
 }
-unsigned char * renvoyer_nom_du_symbole(int indice, FILE * file,Elf32Hdr header,Elf32_Shdr* tab_sec)
+unsigned char * renvoyer_nom_du_symbole(int indice, FILE * file,Elf32Hdr header,Tab_Sec* tab_sec)
 {   
     int shnum =header.e_shnum;
     int shstrndx  =header.e_shstrndx;
     int i=0;
-    Elf32_Shdr symtab=tab_sec[0];
-    Elf32_Shdr strtab=tab_sec[0];
+    Elf32_Shdr symtab=tab_sec[0].section;
+    Elf32_Shdr strtab=tab_sec[0].section;
     Elf32_Sym symtable;
-
     for(int i=0;i<shnum;i++){   
-        if(tab_sec[i].sh_type==SHT_SYMTAB) {
-            symtab=tab_sec[i];
+        if(tab_sec[i].section.sh_type==SHT_SYMTAB) {
+            symtab=tab_sec[i].section;
         }
-        if(tab_sec[i].sh_type==SHT_STRTAB && i!=shstrndx){
-            strtab=tab_sec[i];
+        if(tab_sec[i].section.sh_type==SHT_STRTAB && i!=shstrndx){
+            strtab=tab_sec[i].section;
         }
     }
     
@@ -111,7 +113,7 @@ unsigned char * renvoyer_nom_du_symbole(int indice, FILE * file,Elf32Hdr header,
     //free(tab_sec);
 }
 //---------------------------------------------------------------------------
-void affiche_table_Symboles(FILE *file,Elf32_Shdr* tab_sec,Elf32Hdr header, Elf32_Sym * tab_sym){
+void affiche_table_Symboles(FILE *file,Tab_Sec* tab_sec,Elf32Hdr header, Tab_Sym * tab_sym){
     int i=0;
     int taille;
     
@@ -121,14 +123,15 @@ void affiche_table_Symboles(FILE *file,Elf32_Shdr* tab_sec,Elf32Hdr header, Elf3
 
 
     taille= get_taille_table_symbole(file, tab_sec, header); // nombre de symboles
-    
+    printf("name = %s\n",tab_sym[0].name);
     // l'affichage
     printf("La table de symboles « .symtab » contient %d entrées :\n",taille);
     printf("%7s\t%9s %s %s\t%2s\t%s\t%4s %s","Num:","Valeur","Tail","Type","Lien","Vis","Ndx","Nom");
     printf("\n");
     i=0;
     while(i<taille){
-        Elf32_Sym symtable= tab_sym[i];
+        Elf32_Sym symtable= tab_sym[i].symbole;
+        
         switch(ELF32_ST_TYPE(symtable.st_info)){
             case STT_NOTYPE : symbole_type="NOTYPE";
                 break;
@@ -180,8 +183,8 @@ void affiche_table_Symboles(FILE *file,Elf32_Shdr* tab_sec,Elf32Hdr header, Elf3
                 printf("%5s","ABS");
             }
         }
-
-        printf(" %s",renvoyer_nom_du_symbole(i,file, header,tab_sec));       
+        
+        printf(" %s",tab_sym[i].name);       
         printf("\n");   
         i++;
     }
