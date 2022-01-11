@@ -1,6 +1,13 @@
 {
     "files.associations": {
-        "read_sectiondata.h": "c"
+        "read_sectiondata.h": "c",
+        "array": "c",
+        "functional": "c",
+        "istream": "c",
+        "ostream": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

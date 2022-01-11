@@ -123,7 +123,6 @@ void affiche_table_Symboles(FILE *file,Tab_Sec* tab_sec,Elf32Hdr header, Tab_Sym
 
 
     taille= get_taille_table_symbole(file, tab_sec, header); // nombre de symboles
-    printf("name = %s\n",tab_sym[0].name);
     // l'affichage
     printf("La table de symboles « .symtab » contient %d entrées :\n",taille);
     printf("%7s\t%9s %s %s\t%2s\t%s\t%4s %s","Num:","Valeur","Tail","Type","Lien","Vis","Ndx","Nom");
