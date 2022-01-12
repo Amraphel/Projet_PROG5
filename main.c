@@ -1,4 +1,4 @@
-#include "part6.h"
+#include "reimplantation_ARM.h"
 
 int main(int argc, char *argv[]){
 	if (argc==1){
@@ -11,7 +11,7 @@ int main(int argc, char *argv[]){
 			printf(" -S   pour afficher la table des sections\n");
 			printf(" -x nb   pour afficher le contenu de la section nb\n");
 			printf(" -s   pour afficher la table des symboles\n");
-			printf(" -r   pour afficher la tale des réimplantations\n"); 
+			printf(" -r   pour afficher la tale des réadressages\n"); 
 			printf(" -a   pour tout afficher (hormis le contenu de chacune des sections)\n ");}
 		else {
   		  	FILE *file = fopen(argv[argc-1], "rb"); 
@@ -78,17 +78,28 @@ int main(int argc, char *argv[]){
 					free(tab); }
 				if (option_s == 1){
 					affiche_table_Symboles(file,sect,header,sym);
-					// int* tab_renum= init_tab_renum(header);
-					// Tab_Sec* sect2= renumerotation_table_section(&header, sect, tab_renum,32,10240);
-					// renumerotation_table_symbole(file, sym, header, sect2, tab_renum);
-					// affiche_table_Symboles(file,sect2,header,sym);
-					// free(sect2);
-					// free(tab_renum);
+					int* tab_renum= init_tab_renum(header);
+					Tab_Sec* sect2= renumerotation_table_section(&header, sect, tab_renum,32,10240);
+					renumerotation_table_symbole(file, sym, header, sect2, tab_renum);
+					affiche_table_Symboles(file,sect2,header,sym);
+					free(sect2);
+					free(tab_renum);
 					 }
 				if (option_r == 1){
 					print_reloc_table(tab_reloc,header,sect,file,sym); }
 				if (option_err == 1){
 					printf("Une des options choisies est incorrecte.\n"); }
+
+				int* tab_renum= init_tab_renum(header);
+				Elf32Hdr newheader =header;
+				Tab_Sec* sect2= renumerotation_table_section(&newheader, sect, tab_renum,32,10240);
+				renumerotation_table_symbole(file, sym, newheader, sect2, tab_renum);
+
+				Table_sect_data * tab_sec_data= write_reimp(file, header, tab_reloc, sect,sect2, sym,tab_renum);
+				print_sect_mod(file, tab_sec_data, header, sect);
+				free_sect_mod(tab_sec_data,header,sect);
+				free(sect2);
+				free(tab_renum);
 				free(tab_reloc);
 				free(sect);
 				free(sym);

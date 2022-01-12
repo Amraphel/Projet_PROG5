@@ -25,6 +25,8 @@ Elf32_Shdr lire_une_section(FILE* file, Elf32Hdr header){
     fread(&sh_addralign,1, sizeof(ELF32_Word), file);
     ELF32_Word sh_entsize;
     fread(&sh_entsize,1, sizeof(ELF32_Word), file);
+
+    //On applique les modifications nécéssaires auc futures traitements
     sections.sh_name=reverse_endianess(sh_name,header,0);
     sections.sh_type=reverse_endianess(sh_type,header,0);
     sections.sh_flags=reverse_endianess(sh_flags,header,0);
@@ -42,21 +44,20 @@ Tab_Sec * read_elf_section(FILE *file, Elf32Hdr header)
 {
     Tab_Sec * sections = NULL;
     sections = malloc(sizeof(Tab_Sec) * header.e_shnum);
-
     if(sections){
     
         fseek(file, header.e_shoff, SEEK_SET);
 
         for (size_t i = 0; i < header.e_shnum; i++) {
+            //Récupération de l'en-tête
             sections[i].section=lire_une_section(file, header);
+            //Récupération du nom
             sections[i].name=getSectionName(header, file,i);
         }
     }else{
         fprintf(stderr,"Erreur malloc sections");
         exit(1);
     }
-
-
     return sections;
 }
 
@@ -71,23 +72,31 @@ void print_elf_section(Elf32Hdr header, Tab_Sec * sections, FILE* elfFile){
     int * flag_ind = malloc(sizeof(int));
     for (size_t i = 0; i < header.e_shnum; i++)
     {
-        //number
+        //Affichage indice
         printf("[%2ld]\t",i);
 
-        //section name
+        //Affichage nom
         name = sections[i].name;
         printf("%-20s\t",name);
         
-        // Type
+        //Affichage type
         ELF32_Word type = sections[i].section.sh_type;
         char * typeAffich = get_section_type(type, name);
         printf("%-14s\t",typeAffich);
         
+        //Affichage sh_addr
         printf("%08x\t",sections[i].section.sh_addr);
+
+        //Affichage sh_offset
         printf("%06x\t",sections[i].section.sh_offset);
+
+        //Affichage sh_size
         printf("%06x\t",sections[i].section.sh_size);
+
+        //Affichage sh_entsize
         printf("%02x\t",sections[i].section.sh_entsize);
 
+        //Affichage des flags
         ELF32_Word sh_flags = sections[i].section.sh_flags;
         char * flag = get_section_flag(sh_flags,flag_ind);
 
@@ -99,8 +108,13 @@ void print_elf_section(Elf32Hdr header, Tab_Sec * sections, FILE* elfFile){
         free(flag);
         printf("\t");
       
+        //Affichage sh_link
         printf("%-2d\t",sections[i].section.sh_link);
+
+        //Affichage sh_info
         printf("%-3d\t",sections[i].section.sh_info);
+
+        //Affichage sh_addralign
         printf("%-2d\t",sections[i].section.sh_addralign);
 
         
@@ -116,20 +130,21 @@ void print_elf_section(Elf32Hdr header, Tab_Sec * sections, FILE* elfFile){
 char * getSectionName(Elf32Hdr header, FILE* elfFile, int i){
 
     Elf32_Shdr sectionStrTab;
-
+    //On récupère la table des strings
     fseek(elfFile, header.e_shoff +header.e_shstrndx * header.e_shentsize, SEEK_SET);
     fread(&sectionStrTab, 1, sizeof(Elf32_Shdr), elfFile);
-    char* SectNames = NULL;
-    SectNames = malloc(reverse_endianess(sectionStrTab.sh_size,header,0));
+
+    //On récupère la liste des caractère de la table des strings
+    char* SectNames =  malloc(reverse_endianess(sectionStrTab.sh_size,header,0));
     fseek(elfFile, reverse_endianess(sectionStrTab.sh_offset,header,0), SEEK_SET);
     fread(SectNames, 1, reverse_endianess(sectionStrTab.sh_size,header,0), elfFile);
 
     char* name = "";
-    //section name
+    //On se place à la bonne section
     fseek(elfFile, header.e_shoff + i * sizeof(Elf32_Shdr), SEEK_SET);
     fread(&sectionStrTab, 1, sizeof(Elf32_Shdr), elfFile);
 
-        // print section name
+        // On récupère le nom
     if (sectionStrTab.sh_name){
         name = SectNames + reverse_endianess(sectionStrTab.sh_name,header,0);
     }
@@ -297,19 +312,3 @@ char * get_section_flag(ELF32_Word sh_flags, int * flag_ind){
     return flag;
 }
 
-// int main(int argc, char *argv[])
-// {
-//     FILE *file = fopen(argv[1], "rb");
-//     if(!file){
-//         printf("erreur de lecture");
-//     } else {
-//         Elf32Hdr header = read_elf_header(file);
-//         Elf32_Shdr * sections = NULL;
-//         sections = read_elf_section(file, header);
-//         print_elf_section(header,sections,file);
-//         free(sections);
-//     }
-
-//     fclose(file);
-//     return 0;
-// }

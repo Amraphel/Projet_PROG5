@@ -5,6 +5,8 @@
 #define ELF32_R_TYPE(i) ((unsigned char)(i))
 #define ELF32_R_INFO(s,t) (((s)<<8)+(unsigned char)(t))
 
+/* Partie 5*/
+
 typedef struct {
         ELF32_Addr      r_offset;
         ELF32_Word      r_info;
@@ -25,7 +27,7 @@ typedef struct {
 /*Fonction de récupération du nombre de section de réadressage
 Arguments:
         -header : Le header du fichier
-        -sections : Le tableau des sections du fichier
+        -sections : Le tableau contenant les en-têtes et noms des sections du fichier
 Revoie :
         Le nombre de section de réadressage
 */
@@ -33,9 +35,9 @@ int get_number_reloc_sect(Elf32Hdr header, Tab_Sec * sections);
 
 /*Fonction de récupération des données des fonction de réadressage
 Arguments:
-        -file : l'addresse de lecture du fichier
+        -file : l'adresse de lecture du fichier
         -header : Le header du fichier
-        -sections : Le tableau des sections du fichier
+        -sections : Le tableau contenant les en-têtes et noms des sections du fichier
 Renvoie:
         Un tableau des contenant la liste des sections de réadressage, avec leur indice,
         leur taille et la liste des réadressages qu'elles contiennent
@@ -47,8 +49,10 @@ Tab_Rel* read_temp_reloc_table (FILE* file,Elf32Hdr header, Tab_Sec* sections);
 Arguments:
         -tab : Le tableau des sections de réadressage avec leur données
         -header : Le header du fichier
-        -sections : La tableau des sections
-        -file : l'addresse de lecture du fichier
-        -sym : La table des symboles
+        -sections : Le tableau contenant les en-têtes et noms des sections du fichier
+        -file : l'adresse de lecture du fichier
+        -sym : La table des symboles avec leurs données et leur nom
+Effet de bord: 
+        Affiche la table des réadressage
 */
 void print_reloc_table(Tab_Rel* tab, Elf32Hdr header, Tab_Sec* sections, FILE * file, Tab_Sym* sym);

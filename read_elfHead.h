@@ -8,9 +8,10 @@ typedef uint32_t ELF32_Off ;
 typedef int32_t ELF32_Sword ;
 typedef uint32_t ELF32_Word ;
 
+/*Partie 1*/
 
 typedef struct {
-  unsigned char  e_ident[16];         /* Magic number and other info */
+  unsigned char  e_ident[16];     
   ELF32_Half     e_type;             
   ELF32_Half     e_machine;         
   ELF32_Word     e_version;          
@@ -26,6 +27,11 @@ typedef struct {
   ELF32_Half     e_shstrndx;          
 } Elf32Hdr; 
 
+
+/*Fonction de verification de l'endianess de l'ordinateur
+Renvoie:
+  1 si l'ordinateur utilise le little_endian
+*/
 int is_little_endian();
 
 /*Fonction de test du big endian
@@ -43,15 +49,15 @@ Arguments:
   -half : Un indicateur pour forcer un décalage de 16 bits sur la droite si 1, 
           ou ne pas le faire si 0
 Renvoie:
-  Soit la valeur originale si elle était déjà en little endian
-  Soit la valeur modifié en little endian
-  Soit la valuer modifié en little endian avec un décalage de 16bits sur la droite
+  Soit la valeur originale si elle correspond au format de l'ordinateur
+  Soit la valeur modifié  pour ce format
+  Soit la valeur modifié  pour ce format avec un décalage de 16bits sur la droite
 */
 int reverse_endianess(int value,Elf32Hdr header, int half );
 
 /*Fonction de récupération du header
 Arguments:
-  -file : L'addresse de lecture du fichier 
+  -file : L'adresse de lecture du fichier 
 Renvoie:
   Le header du fichier
 */
@@ -107,5 +113,7 @@ char * getHtype(Elf32Hdr header);
 /*Fonction d'affichage du header du fichier
 Arguments:
   -header : Le header du fichier
+Effet de bord:
+  Affiche le header du fichier
 */
 void print_ELF_header(Elf32Hdr header);

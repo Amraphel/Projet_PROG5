@@ -1,4 +1,4 @@
-#include "part6.h"
+#include "renum_correction.h"
 
 // initialiser 
 int* init_tab_renum(Elf32Hdr header){
@@ -99,7 +99,7 @@ void renumerotation_table_symbole(FILE* file,Tab_Sym* tab_sym ,Elf32Hdr header,T
 
 	// on se sert de la table de renumérotation pour modifier la colonne Ndx de la table des symboles
 	int taille = get_taille_table_symbole(file, tab_sec, header);
-    trier_table_symbole(tab_sym, header, tab_sec, file);    
+    // trier_table_symbole(tab_sym, header, tab_sec, file);    
 	for (int i = 1; i<taille ; i++){
 		tab_sym[i].symbole.st_shndx = tab_renum[tab_sym[i].symbole.st_shndx]; 
 		tab_sym[i].symbole.st_value=tab_sym[i].symbole.st_value+ tab_sec[tab_sym[i].symbole.st_shndx].section.sh_addr;

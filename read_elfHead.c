@@ -26,6 +26,7 @@ int reverse_endianess(int value,Elf32Hdr header, int half )
         destination = ((char *)&resultat) + sizeof(int);
         for (i = 0; i < sizeof(int); i++)
             *(--destination) = *(source++);
+        //Si on souhaite faire le décalage
         if(half==1){
             return resultat>>16;
         } else {
@@ -41,7 +42,7 @@ int reverse_endianess(int value,Elf32Hdr header, int half )
 Elf32Hdr read_elf_header(FILE *file)
 {
     Elf32Hdr header;
-    // fread(&header, 1, sizeof(header), file);
+
     unsigned char  e_ident[16];
     fread(&e_ident,16, sizeof(unsigned char), file );
 
@@ -87,6 +88,8 @@ Elf32Hdr read_elf_header(FILE *file)
     for(int i=0; i<16; i++){
         header.e_ident[i]=e_ident[i];
     }
+
+    //On applique les modifications nécéssaires auc futures traitements
     header.e_type=reverse_endianess(e_type,header,1);
     header.e_machine= reverse_endianess(e_machine,header,1);
     header.e_version= reverse_endianess(e_version,header,0);
@@ -280,14 +283,12 @@ void print_ELF_header(Elf32Hdr header){
         printf("  %-35s\t","Type:");
         printf("%s\n", getHtype(header));
 
-
         //Affichage de e_machine
         if(header.e_machine==40){
             printf("  %-35s\tARM\n","Machine:");
         } else {
             printf("  %-35s\tNon-ARM\n","Machine:");
         }
-
 
         //Affichage de e_version
         printf("  %-35s\t","Version:");
@@ -343,17 +344,3 @@ void print_ELF_header(Elf32Hdr header){
 
 }
 
-// int main(int argc, char *argv[])
-// {
-//     char *elfile = argv[1];
-//     FILE *file = fopen(elfile, "rb");
-//     if(!file){
-//         printf("erreur de lecture");
-//     } else {
-//             Elf32Hdr header= read_elf_header(file);
-//             print_ELF_header(header);
-//     }
-
-//     fclose(file);
-//     return 0;
-// }

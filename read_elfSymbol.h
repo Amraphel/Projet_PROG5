@@ -36,6 +36,8 @@
 #define STV_HIDDEN 2
 #define STV_PROTECTED 3
 
+/* Partie 4*/
+
 typedef uint32_t ELF32_Addr ;
 typedef uint16_t ELF32_Half ;
 typedef uint32_t ELF32_Off ;
@@ -56,35 +58,53 @@ typedef struct {
     unsigned char * name;
 } Tab_Sym;
 
-
+/* Fonction de lecture de symbole
+Arguments:
+    -file : L'adresse de lecture du fichier
+    -header : Le header du fichier
+Renvoie;
+    Le symbole correspondante à l'emplacement de l'adresse de lecture
+*/
 Elf32_Sym lire_un_symbole(FILE * file, Elf32Hdr header);
 
+/* Fonction de recupération de la taille de la table des symbole
+Arguments:
+    -file : L'adresse de lecture du fichier
+    -header : Le header du fichier
+    -tab_sec : Le tableau contenant les en-têtes et noms des sections du fichier
+Renvoie;
+    La de la table des symboles
+*/
 int get_taille_table_symbole (FILE * file, Tab_Sec* tab_sec, Elf32Hdr header);
 
 /*Fonction de lecture de la table des symboles
 Arguments:
-    -file : L'addresse de lecture du fichier 
+    -file : L'adresse de lecture du fichier 
     -header : Le header du fichier
-    -tab_sec : Le tableau des sections du fichier
+    -tab_sec : Le tableau contenant les en-têtes et noms des sections du fichier
 Renvoie:
-    Un pointeur sur un tableau contenant les données de la tables des symboles
+    Un pointeur sur un tableau contenant les données et les noms des différents symboles
+    contenus dans la tables des symboles
 */
 Tab_Sym*  renvoyer_table_sym(FILE * file, Elf32Hdr header , Tab_Sec* tab_sec);
+
 /*Fonction récupération du nom d'un symbole
 Arguments:
     -indice : L'indice du symbole dont on affiche le nom
-    -file : L'addresse de lecture du fichier 
+    -file : L'adresse de lecture du fichier 
     -header : Le header du fichier
-    -tab_sec : Le tableau des sections du fichier
+    -tab_sec : Le tableau contenant les en-têtes et noms des sections du fichier
 Renvoie:
-    Le nom de la symbole correspondant à l'indice souhaité
+    Le nom du symbole correspondant à l'indice souhaité
 */
 unsigned char * renvoyer_nom_du_symbole(int indice, FILE * file,Elf32Hdr header,Tab_Sec* tab_sec);
 
 /*Fonction d'affichage de la table des symboles
 Arguments:
-    -file : L'addresse de lecture du fichier 
-    -tab_sec : Le tableau des sections du fichier
+    -file : L'adresse de lecture du fichier 
+    -tab_sec : Le tableau contenant les en-têtes et noms des sections du fichier
     -header : Le header du fichier
+Effet de bord:
+    Affiche la table des symboles
 */
 void affiche_table_Symboles(FILE *file,Tab_Sec* tab_sec,Elf32Hdr header, Tab_Sym* tab_sym);

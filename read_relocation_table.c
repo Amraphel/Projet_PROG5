@@ -71,9 +71,14 @@ void print_reloc_table(Tab_Rel* tab, Elf32Hdr header, Tab_Sec* sections, FILE * 
             printf("%-8s %-8s %-12s %-15s %-12s\n","Décalage", "Info",  "Type", "Val.-sym",   "Noms-symboles");
             for(int j=0; j<tab[i].taille; j++){
                 
+                //Affichage de l'offset
                 printf("%08x ",tab[i].list_rel[j].r_offset);
+
+                //Affichage des infos
                 printf("%08x ", tab[i].list_rel[j].r_info);
                 char * type;
+
+                //Affichage du type
                 switch (ELF32_R_TYPE(tab[i].list_rel[j].r_info))
                 {
                 case 0:
@@ -102,8 +107,10 @@ void print_reloc_table(Tab_Rel* tab, Elf32Hdr header, Tab_Sec* sections, FILE * 
                 }
                 printf("%-12s ", type);
 
+                //Affichage de la valeur
                 printf("%08x%7s", sym[ELF32_R_SYM(tab[i].list_rel[j].r_info)].symbole.st_value,"");
                 if(ELF32_ST_TYPE(sym[ELF32_R_SYM(tab[i].list_rel[j].r_info)].symbole.st_info)==STT_SECTION){
+                //Affichage du nom
                 printf("%-15s", getSectionName(header,file, sym[ELF32_R_SYM(tab[i].list_rel[j].r_info)].symbole.st_shndx));
                 } else{
                     unsigned char * nom =sym[ELF32_R_SYM(tab[i].list_rel[j].r_info)].name;

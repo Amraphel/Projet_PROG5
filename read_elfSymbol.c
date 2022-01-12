@@ -11,13 +11,13 @@ int get_taille_table_symbole (FILE * file, Tab_Sec* tab_sec, Elf32Hdr header){
     int shnum =header.e_shnum;
     int i=0;
     Elf32_Shdr symtab=tab_sec[0].section;
+    //On récupère la section correspondant à la table des symboles
     for(i=0;i<shnum;i++){   
         if(tab_sec[i].section.sh_type==SHT_SYMTAB) {
             symtab=tab_sec[i].section;
         }
 
     }
-
     i=0;
     int taille=(symtab.sh_size/symtab.sh_entsize);
     return taille;
@@ -44,6 +44,7 @@ Elf32_Sym lire_un_symbole(FILE * file, Elf32Hdr header){
     ELF32_Half st_shndx;
     fread(&st_shndx,1, sizeof(ELF32_Half), file);
 
+    //On applique les modifications nécéssaires auc futures traitements
     symbole.st_name=reverse_endianess(st_name,header,0);
     symbole.st_value=reverse_endianess(st_value,header,0);
     symbole.st_size=st_size;
@@ -58,6 +59,7 @@ Tab_Sym*  renvoyer_table_sym(FILE * file, Elf32Hdr header , Tab_Sec* tab_sec)
     int shnum =header.e_shnum;
     int i=0;
     Elf32_Shdr symtab=tab_sec[0].section;
+    //On récupère la section correspondant à la table des symboles
     for(i=0;i<shnum;i++){   
         if(tab_sec[i].section.sh_type==SHT_SYMTAB) {
             symtab=tab_sec[i].section;
@@ -69,8 +71,13 @@ Tab_Sym*  renvoyer_table_sym(FILE * file, Elf32Hdr header , Tab_Sec* tab_sec)
     int taille=(symtab.sh_size/symtab.sh_entsize);
 
     Tab_Sym* symtable = malloc(sizeof(Tab_Sym)*taille);
+    if(symtable==NULL){
+        fprintf(stderr, "Erreur allocation mémoire table des symboles");
+        return NULL;
+    }
     Elf32_Sym sym;
 
+    //On lis tous les symboles
     while(i<taille){
         sym= lire_un_symbole(file, header);
         symtable[i].symbole=sym;
@@ -79,6 +86,8 @@ Tab_Sym*  renvoyer_table_sym(FILE * file, Elf32Hdr header , Tab_Sec* tab_sec)
     }
     return symtable;
 }
+
+
 unsigned char * renvoyer_nom_du_symbole(int indice, FILE * file,Elf32Hdr header,Tab_Sec* tab_sec)
 {   
     int shnum =header.e_shnum;
@@ -87,6 +96,7 @@ unsigned char * renvoyer_nom_du_symbole(int indice, FILE * file,Elf32Hdr header,
     Elf32_Shdr symtab=tab_sec[0].section;
     Elf32_Shdr strtab=tab_sec[0].section;
     Elf32_Sym symtable;
+    //On récupère la table des string et celle des symboles
     for(int i=0;i<shnum;i++){   
         if(tab_sec[i].section.sh_type==SHT_SYMTAB) {
             symtab=tab_sec[i].section;
@@ -95,22 +105,23 @@ unsigned char * renvoyer_nom_du_symbole(int indice, FILE * file,Elf32Hdr header,
             strtab=tab_sec[i].section;
         }
     }
-    
+    //On récupère la liste des caractères de la liste des symbole
     fseek(file,strtab.sh_offset, SEEK_SET);
     unsigned char* strtable = (unsigned char *)malloc(sizeof(unsigned char)*strtab.sh_size);
     
     fread(strtable, sizeof(char), strtab.sh_size, file);
     fseek(file,symtab.sh_offset, SEEK_SET);
     i=0;
+    //On se place au bon symbole
     while(i<=indice)
     {
         symtable=lire_un_symbole(file, header);
         i++;
     }
+    //On récupère le nom correspondant
     strtable=strtable+symtable.st_name;
     return strtable;
 
-    //free(tab_sec);
 }
 //---------------------------------------------------------------------------
 void affiche_table_Symboles(FILE *file,Tab_Sec* tab_sec,Elf32Hdr header, Tab_Sym * tab_sym){
@@ -131,6 +142,7 @@ void affiche_table_Symboles(FILE *file,Tab_Sec* tab_sec,Elf32Hdr header, Tab_Sym
     while(i<taille){
         Elf32_Sym symtable= tab_sym[i].symbole;
         
+        //Récupération du type
         switch(ELF32_ST_TYPE(symtable.st_info)){
             case STT_NOTYPE : symbole_type="NOTYPE";
                 break;
@@ -143,6 +155,7 @@ void affiche_table_Symboles(FILE *file,Tab_Sec* tab_sec,Elf32Hdr header, Tab_Sym
             case STT_FILE : symbole_type="FILE";
                 break;
         }
+        //Récupération du lien
         switch(ELF32_ST_BIND(symtable.st_info)){
             case STB_LOCAL : symbole_bind= "LOCAL";
                 break;
@@ -151,6 +164,7 @@ void affiche_table_Symboles(FILE *file,Tab_Sec* tab_sec,Elf32Hdr header, Tab_Sym
             case STB_WEAK : symbole_bind=  "WEAK";
                 break;
         }
+        //Récupération du vis
         switch(symtable.st_other>>4){
             case STV_DEFAULT : symbole_vis="DEFAULT";
                 break;
@@ -164,11 +178,18 @@ void affiche_table_Symboles(FILE *file,Tab_Sec* tab_sec,Elf32Hdr header, Tab_Sym
                 break;
         }
         printf("%6d:",i);
+        //Affichage de la valeur
         printf(" %08x",symtable.st_value);
+        //Affichage de la taille
         printf("%6d",symtable.st_size);
+        //Affichage du type
         printf(" %s",symbole_type);
+        //Affichage du lien
         printf("\t%s",symbole_bind);
+        //Affichage du vis
         printf("\t%6s",symbole_vis);
+
+        //Affichage du Ndx
         int indexe = symtable.st_shndx;
         if(indexe>0){
             printf("%5d",indexe);
@@ -182,7 +203,7 @@ void affiche_table_Symboles(FILE *file,Tab_Sec* tab_sec,Elf32Hdr header, Tab_Sym
                 printf("%5s","ABS");
             }
         }
-        
+        //Affichage du nom
         printf(" %s",tab_sym[i].name);       
         printf("\n");   
         i++;
@@ -191,22 +212,3 @@ void affiche_table_Symboles(FILE *file,Tab_Sec* tab_sec,Elf32Hdr header, Tab_Sym
 
 }
 
-//---------------------------------------------------------------------------
-// int main(int argc, char *argv[])
-// {
-//     char *elfile = argv[1];
-//     FILE *file = fopen(elfile, "rb");
-//     if(!file){
-//         printf("erreur de lecture");
-//     } else {
-//         Elf32Hdr header;
-//         fread(&header, 1, sizeof(header), file);
-//         Elf32_Shdr* tab_sec =read_elf_section(file,header);
-//         affiche_table_Symboles(file,tab_sec,header);
-//         // unsigned char *valeur =renvoyer_nom_du_symbole(20,file,header,tab_sec);
-//         // printf("%s",valeur);
-//         free(tab_sec);
-//     }
-//     fclose(file);
-//     return 0;
-// }

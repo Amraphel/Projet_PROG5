@@ -113,7 +113,7 @@ ARM_runner_example_DEPENDENCIES =
 am_readelf2_OBJECTS = main.$(OBJEXT) read_elfHead.$(OBJEXT) \
 	read_elfSection.$(OBJEXT) read_elfSymbol.$(OBJEXT) \
 	read_sectiondata.$(OBJEXT) read_relocation_table.$(OBJEXT) \
-	part6.$(OBJEXT)
+	renum_correction.$(OBJEXT) reimplantation_ARM.$(OBJEXT)
 readelf2_OBJECTS = $(am_readelf2_OBJECTS)
 readelf2_LDADD = $(LDADD)
 readelf2_DEPENDENCIES =
@@ -135,11 +135,12 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/ARM_runner_example.Po \
 	./$(DEPDIR)/arm_simulator_interface.Po ./$(DEPDIR)/csapp.Po \
 	./$(DEPDIR)/debug.Po ./$(DEPDIR)/gdb_protocol.Po \
-	./$(DEPDIR)/main.Po ./$(DEPDIR)/part6.Po \
-	./$(DEPDIR)/read_elfHead.Po ./$(DEPDIR)/read_elfSection.Po \
-	./$(DEPDIR)/read_elfSymbol.Po \
+	./$(DEPDIR)/main.Po ./$(DEPDIR)/read_elfHead.Po \
+	./$(DEPDIR)/read_elfSection.Po ./$(DEPDIR)/read_elfSymbol.Po \
 	./$(DEPDIR)/read_relocation_table.Po \
-	./$(DEPDIR)/read_sectiondata.Po ./$(DEPDIR)/scanner.Po \
+	./$(DEPDIR)/read_sectiondata.Po \
+	./$(DEPDIR)/reimplantation_ARM.Po \
+	./$(DEPDIR)/renum_correction.Po ./$(DEPDIR)/scanner.Po \
 	./$(DEPDIR)/util.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
@@ -360,7 +361,7 @@ COMMON = debug.h debug.c util.h util.c
 EXTRA_DIST = filtre.pl sample_run.sh
 SIMULATOR_INTERFACE = csapp.h csapp.c scanner.h scanner.l gdb_protocol.h gdb_protocol.c arm_simulator_interface.h arm_simulator_interface.c
 ARM_runner_example_SOURCES = $(COMMON) $(SIMULATOR_INTERFACE) ARM_runner_example.c
-readelf2_SOURCES = main.c read_elfHead.c read_elfSection.c read_elfSymbol.c read_sectiondata.c read_relocation_table.c part6.c
+readelf2_SOURCES = main.c read_elfHead.c read_elfSection.c read_elfSymbol.c read_sectiondata.c read_relocation_table.c renum_correction.c reimplantation_ARM.c
 all: all-recursive
 
 .SUFFIXES:
@@ -461,12 +462,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/debug.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdb_protocol.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/part6.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_elfHead.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_elfSection.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_elfSymbol.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_relocation_table.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_sectiondata.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/reimplantation_ARM.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/renum_correction.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scanner.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Po@am__quote@ # am--include-marker
 
@@ -841,12 +843,13 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/debug.Po
 	-rm -f ./$(DEPDIR)/gdb_protocol.Po
 	-rm -f ./$(DEPDIR)/main.Po
-	-rm -f ./$(DEPDIR)/part6.Po
 	-rm -f ./$(DEPDIR)/read_elfHead.Po
 	-rm -f ./$(DEPDIR)/read_elfSection.Po
 	-rm -f ./$(DEPDIR)/read_elfSymbol.Po
 	-rm -f ./$(DEPDIR)/read_relocation_table.Po
 	-rm -f ./$(DEPDIR)/read_sectiondata.Po
+	-rm -f ./$(DEPDIR)/reimplantation_ARM.Po
+	-rm -f ./$(DEPDIR)/renum_correction.Po
 	-rm -f ./$(DEPDIR)/scanner.Po
 	-rm -f ./$(DEPDIR)/util.Po
 	-rm -f Makefile
@@ -902,12 +905,13 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/debug.Po
 	-rm -f ./$(DEPDIR)/gdb_protocol.Po
 	-rm -f ./$(DEPDIR)/main.Po
-	-rm -f ./$(DEPDIR)/part6.Po
 	-rm -f ./$(DEPDIR)/read_elfHead.Po
 	-rm -f ./$(DEPDIR)/read_elfSection.Po
 	-rm -f ./$(DEPDIR)/read_elfSymbol.Po
 	-rm -f ./$(DEPDIR)/read_relocation_table.Po
 	-rm -f ./$(DEPDIR)/read_sectiondata.Po
+	-rm -f ./$(DEPDIR)/reimplantation_ARM.Po
+	-rm -f ./$(DEPDIR)/renum_correction.Po
 	-rm -f ./$(DEPDIR)/scanner.Po
 	-rm -f ./$(DEPDIR)/util.Po
 	-rm -f Makefile
