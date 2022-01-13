@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "read_sectiondata.h": "c",
+        "array": "c",
+        "functional": "c",
+        "istream": "c",
+        "ostream": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c",
+        "read_elfsection.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
+}
