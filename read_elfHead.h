@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 typedef uint32_t ELF32_Addr ;
 typedef uint16_t ELF32_Half ;
 typedef uint32_t ELF32_Off ;
