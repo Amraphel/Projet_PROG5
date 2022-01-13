@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "read_elfHeader.h"
+#include "read_elfHead.h"
 
 typedef uint32_t ELF32_Addr ;
 typedef uint16_t ELF32_Half ;
