@@ -86,7 +86,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = ARM_runner_example$(EXEEXT) readelf2$(EXEEXT)
+bin_PROGRAMS = ARM_runner_example$(EXEEXT) readelf2$(EXEEXT) \
+	writeElf$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/hostsubdir.m4 \
@@ -110,13 +111,19 @@ am_ARM_runner_example_OBJECTS = $(am__objects_1) $(am__objects_2) \
 ARM_runner_example_OBJECTS = $(am_ARM_runner_example_OBJECTS)
 ARM_runner_example_LDADD = $(LDADD)
 ARM_runner_example_DEPENDENCIES =
-am_readelf2_OBJECTS = main.$(OBJEXT) read_elfHead.$(OBJEXT) \
+am_readelf2_OBJECTS = main_phase1.$(OBJEXT) read_elfHead.$(OBJEXT) \
 	read_elfSection.$(OBJEXT) read_elfSymbol.$(OBJEXT) \
-	read_sectiondata.$(OBJEXT) read_relocation_table.$(OBJEXT) \
-	renum_correction.$(OBJEXT) reimplantation_ARM.$(OBJEXT)
+	read_sectiondata.$(OBJEXT) read_relocation_table.$(OBJEXT)
 readelf2_OBJECTS = $(am_readelf2_OBJECTS)
 readelf2_LDADD = $(LDADD)
 readelf2_DEPENDENCIES =
+am_writeElf_OBJECTS = main_phase2.$(OBJEXT) read_elfHead.$(OBJEXT) \
+	read_elfSection.$(OBJEXT) read_elfSymbol.$(OBJEXT) \
+	read_sectiondata.$(OBJEXT) read_relocation_table.$(OBJEXT) \
+	renum_correction.$(OBJEXT) reimplantation_ARM.$(OBJEXT)
+writeElf_OBJECTS = $(am_writeElf_OBJECTS)
+writeElf_LDADD = $(LDADD)
+writeElf_DEPENDENCIES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -135,8 +142,9 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/ARM_runner_example.Po \
 	./$(DEPDIR)/arm_simulator_interface.Po ./$(DEPDIR)/csapp.Po \
 	./$(DEPDIR)/debug.Po ./$(DEPDIR)/gdb_protocol.Po \
-	./$(DEPDIR)/main.Po ./$(DEPDIR)/read_elfHead.Po \
-	./$(DEPDIR)/read_elfSection.Po ./$(DEPDIR)/read_elfSymbol.Po \
+	./$(DEPDIR)/main_phase1.Po ./$(DEPDIR)/main_phase2.Po \
+	./$(DEPDIR)/read_elfHead.Po ./$(DEPDIR)/read_elfSection.Po \
+	./$(DEPDIR)/read_elfSymbol.Po \
 	./$(DEPDIR)/read_relocation_table.Po \
 	./$(DEPDIR)/read_sectiondata.Po \
 	./$(DEPDIR)/reimplantation_ARM.Po \
@@ -161,8 +169,10 @@ am__v_LEX_ = $(am__v_LEX_@AM_DEFAULT_V@)
 am__v_LEX_0 = @echo "  LEX     " $@;
 am__v_LEX_1 = 
 YLWRAP = $(top_srcdir)/build-aux/ylwrap
-SOURCES = $(ARM_runner_example_SOURCES) $(readelf2_SOURCES)
-DIST_SOURCES = $(ARM_runner_example_SOURCES) $(readelf2_SOURCES)
+SOURCES = $(ARM_runner_example_SOURCES) $(readelf2_SOURCES) \
+	$(writeElf_SOURCES)
+DIST_SOURCES = $(ARM_runner_example_SOURCES) $(readelf2_SOURCES) \
+	$(writeElf_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -361,7 +371,8 @@ COMMON = debug.h debug.c util.h util.c
 EXTRA_DIST = filtre.pl sample_run.sh
 SIMULATOR_INTERFACE = csapp.h csapp.c scanner.h scanner.l gdb_protocol.h gdb_protocol.c arm_simulator_interface.h arm_simulator_interface.c
 ARM_runner_example_SOURCES = $(COMMON) $(SIMULATOR_INTERFACE) ARM_runner_example.c
-readelf2_SOURCES = main.c read_elfHead.c read_elfSection.c read_elfSymbol.c read_sectiondata.c read_relocation_table.c renum_correction.c reimplantation_ARM.c
+readelf2_SOURCES = main_phase1.c read_elfHead.c read_elfSection.c read_elfSymbol.c read_sectiondata.c read_relocation_table.c 
+writeElf_SOURCES = main_phase2.c read_elfHead.c read_elfSection.c read_elfSymbol.c read_sectiondata.c read_relocation_table.c renum_correction.c reimplantation_ARM.c
 all: all-recursive
 
 .SUFFIXES:
@@ -450,6 +461,10 @@ readelf2$(EXEEXT): $(readelf2_OBJECTS) $(readelf2_DEPENDENCIES) $(EXTRA_readelf2
 	@rm -f readelf2$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(readelf2_OBJECTS) $(readelf2_LDADD) $(LIBS)
 
+writeElf$(EXEEXT): $(writeElf_OBJECTS) $(writeElf_DEPENDENCIES) $(EXTRA_writeElf_DEPENDENCIES) 
+	@rm -f writeElf$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(writeElf_OBJECTS) $(writeElf_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
@@ -461,7 +476,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/csapp.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/debug.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdb_protocol.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main_phase1.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main_phase2.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_elfHead.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_elfSection.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_elfSymbol.Po@am__quote@ # am--include-marker
@@ -842,7 +858,8 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/csapp.Po
 	-rm -f ./$(DEPDIR)/debug.Po
 	-rm -f ./$(DEPDIR)/gdb_protocol.Po
-	-rm -f ./$(DEPDIR)/main.Po
+	-rm -f ./$(DEPDIR)/main_phase1.Po
+	-rm -f ./$(DEPDIR)/main_phase2.Po
 	-rm -f ./$(DEPDIR)/read_elfHead.Po
 	-rm -f ./$(DEPDIR)/read_elfSection.Po
 	-rm -f ./$(DEPDIR)/read_elfSymbol.Po
@@ -904,7 +921,8 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/csapp.Po
 	-rm -f ./$(DEPDIR)/debug.Po
 	-rm -f ./$(DEPDIR)/gdb_protocol.Po
-	-rm -f ./$(DEPDIR)/main.Po
+	-rm -f ./$(DEPDIR)/main_phase1.Po
+	-rm -f ./$(DEPDIR)/main_phase2.Po
 	-rm -f ./$(DEPDIR)/read_elfHead.Po
 	-rm -f ./$(DEPDIR)/read_elfSection.Po
 	-rm -f ./$(DEPDIR)/read_elfSymbol.Po

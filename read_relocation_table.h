@@ -39,7 +39,7 @@ Arguments:
         -header : Le header du fichier
         -sections : Le tableau contenant les en-têtes et noms des sections du fichier
 Renvoie:
-        Un tableau des contenant la liste des sections de réadressage, avec leur indice,
+        Un tableau contenant la liste des sections de réadressage, avec leur indice,
         leur taille et la liste des réadressages qu'elles contiennent
 */
 Tab_Rel* read_temp_reloc_table (FILE* file,Elf32Hdr header, Tab_Sec* sections);

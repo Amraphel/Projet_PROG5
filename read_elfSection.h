@@ -80,7 +80,7 @@ Arguments:
     -sh_flags : La valeur du flags de la section voulue
     -flag_ind : Un pointeur égale à 0 indiquant le nombre de flags différents
 Effet de bord:
-    Change la value rde flag_ind en fonction du nombre de flags
+    Change la valeur de flag_ind en fonction du nombre de flags
 Renvoie:
     Les flags à afficher
 */

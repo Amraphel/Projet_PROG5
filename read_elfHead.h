@@ -49,7 +49,7 @@ Arguments:
   -half : Un indicateur pour forcer un décalage de 16 bits sur la droite si 1, 
           ou ne pas le faire si 0
 Renvoie:
-  Soit la valeur originale si elle correspond au format de l'ordinateur
+  Soit la valeur originale si elle correspond a l'architecture de l'ordinateur
   Soit la valeur modifié  pour ce format
   Soit la valeur modifié  pour ce format avec un décalage de 16bits sur la droite
 */
@@ -82,7 +82,7 @@ char * getHclasse(Elf32Hdr header);
 Arguments:
   -header : Le header du fichier
 Renvoie:
-  Un char* correspondant type de données du fichier
+  Un char* correspondant au type de données du fichier
 */
 char * getHdata(Elf32Hdr header);
 

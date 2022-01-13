@@ -6,8 +6,7 @@ Arguments:
     -sections : Le tableau contenant les en-têtes et noms des sections du fichier
     -header : Le header du fichier
 Renvoie:
-    Un tableau dont la valeur situé à l'indice d'une section correspond au nouvel indice de 
-    cette section 
+    Un tableau contenant les nouveaux indices de sections en fonction des anciens
 */
 int* init_tab_renum(Elf32Hdr header);
 
@@ -20,7 +19,7 @@ Arguments:
     -addrText: contient l'adresse de la section .text à appliquer
     -addrData: contient l'adresse de la section .data à appliquer
 Renvoie:
-    La nouvelle table des sections renuméroté avec les changement de décalage pour chaque section
+    La nouvelle table des sections renumérotée avec les changement de décalage pour chaque section
 */
 Tab_Sec* renumerotation_table_section(Elf32Hdr * header, Tab_Sec* sect, int * tab_renum, int addrText, int addrData);
    
@@ -39,7 +38,7 @@ Effet de bord:
 */
 void renumerotation_table_symbole(FILE* file,Tab_Sym* tab_sym ,Elf32Hdr header,Tab_Sec* tab_sec, int* tab_renum);
 
-/*Fonction de renumérotation de la table des symbole
+/*Fonction de trie de la table des symboles
 Arguments:
     -tab_sym : La table des symboles avec leurs données et leur nom
     -header : Le header du fichier
