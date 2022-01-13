@@ -73,7 +73,7 @@ Arguments:
     -header : Le header du fichier
     -tab_sec : Le tableau contenant les en-têtes et noms des sections du fichier
 Renvoie;
-    La de la table des symboles
+    La taille de la table des symboles
 */
 int get_taille_table_symbole (FILE * file, Tab_Sec* tab_sec, Elf32Hdr header);
 
