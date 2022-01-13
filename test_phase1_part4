@@ -1,0 +1,29 @@
+#!/bin/bash
+
+
+FILES=$(find ./Examples_loader -name "example?.o")
+
+#Color
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+PURPLE='\033[0;35m'
+NC='\033[0m' # No Color
+
+i=0
+for file in $FILES
+
+    do
+        ((i=i+1))
+        echo -e "${BLUE}START TEST ON ${YELLOW} $file ${NC}:"
+        readelf -s $file > output_readelf1
+        ./readelf2 -s $file > output_readelf2
+
+        if diff -w output_readelf1 output_readelf2
+        then
+            echo -e "fichier ${i} : ${RED}ERROR\n"
+        else
+            echo -e "${i} : ${GREEN}SUCCESS${NC}\n"
+        fi
+    done
