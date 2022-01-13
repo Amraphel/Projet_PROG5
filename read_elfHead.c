@@ -306,7 +306,7 @@ void print_ELF_header(Elf32Hdr header){
         }
 
         //Affichage de e_entry
-        printf("  %-35s\t 0x%02x \n","Adresse du point d'entrée:" ,header.e_entry);
+        printf("  %-35s\t 0x%x \n","Adresse du point d'entrée:" ,header.e_entry);
 
         //Affichage de e_phoff
         // printf("%08x\n",header.e_phoff) ;
