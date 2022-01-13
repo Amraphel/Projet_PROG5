@@ -97,7 +97,7 @@ Elf32Hdr read_elf_header(FILE *file)
     header.e_phoff=reverse_endianess(e_phoff,header,0);
     header.e_shoff=reverse_endianess(e_shoff,header,0);
     header.e_flags=reverse_endianess(e_flags,header,0);
-    header.e_ehsize=reverse_endianess(e_ehsize,header,0);
+    header.e_ehsize=reverse_endianess(e_ehsize,header,1);
     header.e_phentsize=reverse_endianess(e_phentsize,header,1);
     header.e_phnum=reverse_endianess(e_phnum,header,1);
     header.e_shentsize=reverse_endianess(e_shentsize,header,1);

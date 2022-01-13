@@ -36,7 +36,7 @@ Effet de bord:
 void r_arm_abs32(FILE* file,uint8_t* tab, Elf32Hdr header, Tab_Rel* tab_reloc, Tab_Sec* tab_sec,Tab_Sym* sym, int ind_sect, int ind_sect_reloc, int ind_reloc);
 
 
-/*Fonctioon de modification d'un tableau de données de section
+/*Fonction de modification d'un tableau de données de section
 Arguments:
     -tab : Les données de la section lue
     -val: La valeur à remplacer dans le tableau
@@ -60,7 +60,7 @@ Renvoie:
 */
 Table_sect_data * write_reimp(FILE* file, Elf32Hdr header, Tab_Rel* tab_reloc, Tab_Sec* sect,Tab_Sec* new_tab_sec,Tab_Sym* sym, int* tab_renum);
 
-/*Fonction d'affichage des données des section modifiése
+/*Fonction d'affichage des données des section modifiées
 Arguments:
     -file : L'adresse de lecture du fichier
     -tab : Le tableau des sections modifiées avec leurs données et leur nom
@@ -71,7 +71,7 @@ Effet de bord:
 */
 void print_sect_mod(FILE * file, Table_sect_data* tab, Elf32Hdr header, Tab_Sec* sect);
 
-/*Fonction libération de la mémoire du tableau des sections
+/*Fonction de libération de la mémoire du tableau des sections
 Arguments:
     -tab : Le tableau des sections modifiées avec leurs données et leur nom
     -header : Le header du fichier

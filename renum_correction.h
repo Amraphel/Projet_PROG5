@@ -3,18 +3,26 @@
 
 /*Fonction de création de la table de renumérotation
 Arguments:
-    -sections : Le tableau contenant les en-têtes et noms des sections du fichier
     -header : Le header du fichier
 Renvoie:
     Un tableau contenant les nouveaux indices de sections en fonction des anciens
 */
 int* init_tab_renum(Elf32Hdr header);
 
+/*Fonction de comptage du nombre de section vide
+Arguments:
+    -header : Le header du fichier
+    -sect : Le tableau contenant les en-têtes et noms des sections du fichier
+Renvoie:
+    Le nombre de section vide
+*/
+int nbSectVide(Elf32Hdr * header, Tab_Sec* sect);
+
 
 /*Fonction de renumérotation des sections
 Arguments:
-    -sections : Le tableau contenant les en-têtes et noms des sections du fichier
     -header : Le header du fichier
+    -sect : Le tableau contenant les en-têtes et noms des sections du fichier
     -tab_renum : La table des renumérotations
     -addrText: contient l'adresse de la section .text à appliquer
     -addrData: contient l'adresse de la section .data à appliquer
@@ -26,7 +34,7 @@ Tab_Sec* renumerotation_table_section(Elf32Hdr * header, Tab_Sec* sect, int * ta
 /*------------------------------------------------------------------------------------------------------------------------------*/
 /*Partie 7*/
 
-/*Fonction de renumérotation de la table des symbole
+/*Fonction de renumérotation et correction de la table des symbole
 Arguments:
     -file : L'adresse de lecture du fichier
     -tab_sym : La table des symboles avec leurs données et leur nom
